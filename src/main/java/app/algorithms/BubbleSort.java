@@ -1,28 +1,35 @@
 package app.algorithms;
 
 import app.view.SortingVisualizer;
+import app.controller.SortController;
+
 import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-public class BubbleSort implements SortAlgorithm {
 
+public class BubbleSort implements SortAlgorithm {
+    
     private final SortingVisualizer visualizer;
     private final int[] values;
     private final Rectangle[] bars;
     private final int delay;
+    private final SortController controller;
 
-    public BubbleSort(SortingVisualizer visualizer, int delay) {
+    public BubbleSort(SortingVisualizer visualizer, SortController controller, int delay) {
         this.visualizer = visualizer;
         this.values = visualizer.getValues();
         this.bars = visualizer.getBars();
         this.delay = delay;
+        this.controller = controller;
     }
 
     @Override
     public void sort() throws InterruptedException {
         new Thread(() -> {
             try {
+                Platform.runLater(() -> controller.setAllControlsDisabled(true));
+
                 for (int i = 0; i < values.length - 1; i++) {
                     for (int j = 0; j < values.length - i - 1; j++) {
                         highlight(j, j + 1, Color.RED);
@@ -38,6 +45,8 @@ public class BubbleSort implements SortAlgorithm {
                 }
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
+            } finally {
+                Platform.runLater(() -> controller.setAllControlsDisabled(false));
             }
         }).start();
     }
