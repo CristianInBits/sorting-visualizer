@@ -2,6 +2,7 @@ package app.controller;
 
 import app.algorithms.BubbleSort;
 import app.view.SortingVisualizer;
+
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
@@ -32,7 +33,7 @@ public class SortController extends HBox {
 
         startButton.setOnAction(e -> {
             int delay = (int) speedSlider.getValue();
-            BubbleSort bubbleSort = new BubbleSort(visualizer, delay);
+            BubbleSort bubbleSort = new BubbleSort(visualizer, this, delay);
             try {
                 bubbleSort.sort();
             } catch (InterruptedException ex) {
@@ -42,4 +43,11 @@ public class SortController extends HBox {
 
         this.getChildren().addAll(newArrayButton, startButton, speedLabel, speedSlider);
     }
+
+    public void setAllControlsDisabled(boolean disabled) {
+        newArrayButton.setDisable(disabled);
+        startButton.setDisable(disabled);
+        speedSlider.setDisable(disabled);
+    }
+
 }
