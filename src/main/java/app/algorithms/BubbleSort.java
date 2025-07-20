@@ -10,13 +10,13 @@ public class BubbleSort implements SortAlgorithm {
     private final SortingVisualizer visualizer;
     private final int[] values;
     private final Rectangle[] bars;
+    private final int delay;
 
-    private static final int DELAY = 30;
-
-    public BubbleSort(SortingVisualizer visualizer) {
+    public BubbleSort(SortingVisualizer visualizer, int delay) {
         this.visualizer = visualizer;
         this.values = visualizer.getValues();
         this.bars = visualizer.getBars();
+        this.delay = delay;
     }
 
     @Override
@@ -26,11 +26,11 @@ public class BubbleSort implements SortAlgorithm {
                 for (int i = 0; i < values.length - 1; i++) {
                     for (int j = 0; j < values.length - i - 1; j++) {
                         highlight(j, j + 1, Color.RED);
-                        Thread.sleep(DELAY);
+                        Thread.sleep(delay);
 
                         if (values[j] > values[j + 1]) {
                             swap(j, j + 1);
-                            Thread.sleep(DELAY);
+                            Thread.sleep(delay);
                         }
 
                         resetColor(j, j + 1);
