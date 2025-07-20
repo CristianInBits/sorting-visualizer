@@ -17,6 +17,7 @@ public class SortingVisualizer extends HBox {
 
     public SortingVisualizer() {
         this.setSpacing(2);
+        this.setStyle("-fx-alignment: bottom-center;");
         generateRandomArray();
         createBars();
 
