@@ -1,5 +1,6 @@
 package app.controller;
 
+import app.algorithms.BubbleSort;
 import app.view.SortingVisualizer;
 import javafx.scene.control.Button;
 import javafx.scene.layout.HBox;
@@ -18,8 +19,12 @@ public class SortController extends HBox {
 
         newArrayButton.setOnAction(e -> visualizer.regenerateArray());
         startButton.setOnAction(e -> {
-            // Sorting functionality will be implemented in next issue
-            System.out.println("Start sorting (not implemented yet)");
+            BubbleSort bubbleSort = new BubbleSort(visualizer);
+            try {
+                bubbleSort.sort();
+            } catch (InterruptedException ex) {
+                throw new RuntimeException(ex);
+            }
         });
 
         this.getChildren().addAll(newArrayButton, startButton);
