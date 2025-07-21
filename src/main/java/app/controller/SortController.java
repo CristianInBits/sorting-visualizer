@@ -1,6 +1,7 @@
 package app.controller;
 
 import app.algorithms.BubbleSort;
+import app.algorithms.QuickSort;
 import app.view.SortingVisualizer;
 
 import javafx.geometry.Insets;
@@ -33,12 +34,10 @@ public class SortController extends HBox {
 
         startButton.setOnAction(e -> {
             int delay = (int) speedSlider.getValue();
-            BubbleSort bubbleSort = new BubbleSort(visualizer, this, delay);
-            try {
-                bubbleSort.sort();
-            } catch (InterruptedException ex) {
-                throw new RuntimeException(ex);
-            }
+            // BubbleSort bubbleSort = new BubbleSort(visualizer, this, delay);
+            // bubbleSort.sort();
+            QuickSort quickSort = new QuickSort(visualizer, this, delay);
+            quickSort.sort();
         });
 
         this.getChildren().addAll(newArrayButton, startButton, speedLabel, speedSlider);
