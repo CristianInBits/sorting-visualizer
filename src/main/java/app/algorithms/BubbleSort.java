@@ -25,7 +25,7 @@ public class BubbleSort implements SortAlgorithm {
     }
 
     @Override
-    public void sort() throws InterruptedException {
+    public void sort() {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
