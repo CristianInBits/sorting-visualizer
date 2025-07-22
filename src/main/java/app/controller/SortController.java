@@ -2,6 +2,7 @@ package app.controller;
 
 import app.algorithms.BubbleSort;
 import app.algorithms.QuickSort;
+import app.algorithms.SelectionSort;
 import app.view.SortingVisualizer;
 
 import javafx.geometry.Insets;
@@ -31,7 +32,10 @@ public class SortController extends HBox {
         startButton = new Button("Start");
 
         algorithmSelector = new ComboBox<>();
-        algorithmSelector.getItems().addAll("Bubble Sort", "Quick Sort");
+        algorithmSelector.getItems().addAll(
+                "Bubble Sort",
+                "Quick Sort",
+                "Selection Sort");
         algorithmSelector.setPromptText("Select Algorithm");
         algorithmSelector.setPrefWidth(150);
 
@@ -53,6 +57,7 @@ public class SortController extends HBox {
             switch (selected) {
                 case "Bubble Sort" -> new BubbleSort(visualizer, this, delay).sort();
                 case "Quick Sort" -> new QuickSort(visualizer, this, delay).sort();
+                case "Selection Sort" -> new SelectionSort(visualizer, this, delay).sort();
                 default -> System.out.println("Unsupported algorithm: " + selected);
             }
         });
