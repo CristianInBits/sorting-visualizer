@@ -1,6 +1,7 @@
 package app.controller;
 
 import app.algorithms.BubbleSort;
+import app.algorithms.MergeSort;
 import app.algorithms.QuickSort;
 import app.algorithms.SelectionSort;
 import app.view.SortingVisualizer;
@@ -35,7 +36,9 @@ public class SortController extends HBox {
         algorithmSelector.getItems().addAll(
                 "Bubble Sort",
                 "Quick Sort",
-                "Selection Sort");
+                "Selection Sort",
+                "Merge Sort");
+
         algorithmSelector.setPromptText("Select Algorithm");
         algorithmSelector.setPrefWidth(150);
 
@@ -58,6 +61,7 @@ public class SortController extends HBox {
                 case "Bubble Sort" -> new BubbleSort(visualizer, this, delay).sort();
                 case "Quick Sort" -> new QuickSort(visualizer, this, delay).sort();
                 case "Selection Sort" -> new SelectionSort(visualizer, this, delay).sort();
+                case "Merge Sort" -> new MergeSort(visualizer, this, delay).sort();
                 default -> System.out.println("Unsupported algorithm: " + selected);
             }
         });
