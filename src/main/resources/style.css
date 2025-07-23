@@ -1,0 +1,37 @@
+/* General scene styling */
+.root {
+    -fx-background-color: #f8f9fa;
+    -fx-font-family: "Segoe UI", sans-serif;
+}
+
+/* Buttons */
+.button {
+    -fx-background-color: #007acc;
+    -fx-text-fill: white;
+    -fx-padding: 6px 14px;
+    -fx-background-radius: 8px;
+    -fx-cursor: hand;
+}
+
+.button:hover {
+    -fx-background-color: #005fa3;
+}
+
+/* ComboBox */
+.combo-box {
+    -fx-background-color: white;
+    -fx-border-color: #007acc;
+    -fx-border-radius: 6px;
+    -fx-padding: 4px;
+}
+
+/* Slider */
+.slider {
+    -fx-pref-width: 180;
+}
+
+/* Labels (e.g. counters) */
+.label {
+    -fx-font-size: 14px;
+    -fx-text-fill: #333;
+}

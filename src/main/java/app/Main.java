@@ -18,6 +18,7 @@ public class Main extends Application {
         root.setBottom(controller);
 
         Scene scene = new Scene(root, 800, 600);
+        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
 
         primaryStage.setTitle("Sorting Visualizer");
         primaryStage.setScene(scene);
