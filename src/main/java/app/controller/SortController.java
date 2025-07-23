@@ -34,7 +34,7 @@ public class SortController extends HBox {
 
         this.setSpacing(10);
         this.setPadding(new Insets(10));
-        this.setStyle("-fx-padding: 10; -fx-alignment: center;");
+        //this.setStyle("-fx-padding: 10; -fx-alignment: center;");
 
         newArrayButton = new Button("New Array");
         startButton = new Button("Start");

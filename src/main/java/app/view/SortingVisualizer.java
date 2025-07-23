@@ -10,7 +10,7 @@ public class SortingVisualizer extends HBox {
 
     private static final int NUM_BARS = 50;
     private static final int MAX_HEIGHT = 300;
-    private static final int BAR_WIDTH = 10;
+    private static final int BAR_WIDTH = 12;
 
     private int[] values;
     private Rectangle[] bars;
