@@ -27,6 +27,7 @@ public class SelectionSort implements SortAlgorithm {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
+                controller.resetCounters();
 
                 for (int i = 0; i < values.length - 1; i++) {
                     int minIndex = i;
@@ -34,6 +35,7 @@ public class SelectionSort implements SortAlgorithm {
 
                     for (int j = i + 1; j < values.length; j++) {
                         highlight(j, Color.RED);
+                        controller.incrementComparisons();
                         Thread.sleep(delay);
 
                         if (values[j] < values[minIndex]) {
@@ -47,6 +49,7 @@ public class SelectionSort implements SortAlgorithm {
 
                     if (minIndex != i) {
                         swap(i, minIndex);
+                        controller.incrementSwaps();
                         Thread.sleep(delay);
                     }
 

@@ -5,13 +5,14 @@ import app.algorithms.MergeSort;
 import app.algorithms.QuickSort;
 import app.algorithms.SelectionSort;
 import app.view.SortingVisualizer;
-
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
 
 public class SortController extends HBox {
 
@@ -21,6 +22,12 @@ public class SortController extends HBox {
     private final ComboBox<String> algorithmSelector;
 
     private final SortingVisualizer visualizer;
+
+    private int comparisons = 0;
+    private int swaps = 0;
+
+    private final Label comparisonsLabel = new Label("Comparisons: 0");
+    private final Label swapsLabel = new Label("Swaps: 0");
 
     public SortController(SortingVisualizer visualizer) {
         this.visualizer = visualizer;
@@ -66,7 +73,11 @@ public class SortController extends HBox {
             }
         });
 
-        this.getChildren().addAll(newArrayButton, startButton, algorithmSelector, speedLabel, speedSlider);
+        VBox counterBox = new VBox(5, comparisonsLabel, swapsLabel);
+        counterBox.setStyle("-fx-alignment: center-left;");
+
+        this.getChildren().addAll(newArrayButton, startButton, algorithmSelector, speedLabel, speedSlider, counterBox);
+
     }
 
     public void setAllControlsDisabled(boolean disabled) {
@@ -74,6 +85,25 @@ public class SortController extends HBox {
         startButton.setDisable(disabled);
         speedSlider.setDisable(disabled);
         algorithmSelector.setDisable(disabled);
+    }
+
+    public void incrementComparisons() {
+        comparisons++;
+        Platform.runLater(() -> comparisonsLabel.setText("Comparisons: " + comparisons));
+    }
+
+    public void incrementSwaps() {
+        swaps++;
+        Platform.runLater(() -> swapsLabel.setText("Swaps: " + swaps));
+    }
+
+    public void resetCounters() {
+        comparisons = 0;
+        swaps = 0;
+        Platform.runLater(() -> {
+            comparisonsLabel.setText("Comparisons: 0");
+            swapsLabel.setText("Swaps: 0");
+        });
     }
 
 }
