@@ -27,6 +27,8 @@ public class QuickSort implements SortAlgorithm {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
+                controller.resetCounters();
+
                 quickSort(0, values.length - 1);
 
             } catch (Exception e) {
@@ -52,11 +54,13 @@ public class QuickSort implements SortAlgorithm {
 
         for (int j = low; j < high; j++) {
             highlight(j, Color.RED);
+            controller.incrementComparisons();
             Thread.sleep(delay);
 
             if (values[j] < pivot) {
                 i++;
                 swap(i, j);
+                controller.incrementSwaps();
                 Thread.sleep(delay);
             }
 
@@ -64,6 +68,7 @@ public class QuickSort implements SortAlgorithm {
         }
 
         swap(i + 1, high);
+        controller.incrementSwaps();
         Thread.sleep(delay);
         resetColor(high);
         resetColor(i + 1);

@@ -7,9 +7,8 @@ import javafx.application.Platform;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
-
 public class BubbleSort implements SortAlgorithm {
-    
+
     private final SortingVisualizer visualizer;
     private final int[] values;
     private final Rectangle[] bars;
@@ -18,10 +17,10 @@ public class BubbleSort implements SortAlgorithm {
 
     public BubbleSort(SortingVisualizer visualizer, SortController controller, int delay) {
         this.visualizer = visualizer;
+        this.controller = controller;
         this.values = visualizer.getValues();
         this.bars = visualizer.getBars();
         this.delay = delay;
-        this.controller = controller;
     }
 
     @Override
@@ -29,14 +28,17 @@ public class BubbleSort implements SortAlgorithm {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
+                controller.resetCounters();
 
                 for (int i = 0; i < values.length - 1; i++) {
                     for (int j = 0; j < values.length - i - 1; j++) {
                         highlight(j, j + 1, Color.RED);
+                        controller.incrementComparisons();
                         Thread.sleep(delay);
 
                         if (values[j] > values[j + 1]) {
                             swap(j, j + 1);
+                            controller.incrementSwaps();
                             Thread.sleep(delay);
                         }
 

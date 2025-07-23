@@ -27,6 +27,8 @@ public class MergeSort implements SortAlgorithm {
         new Thread(() -> {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
+                controller.resetCounters();
+
                 mergeSort(0, values.length - 1);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
@@ -52,6 +54,7 @@ public class MergeSort implements SortAlgorithm {
         while (i <= mid && j <= right) {
             highlight(i, Color.RED);
             highlight(j, Color.RED);
+            controller.incrementComparisons();
             Thread.sleep(delay);
 
             if (values[i] <= values[j]) {
@@ -89,6 +92,8 @@ public class MergeSort implements SortAlgorithm {
         // Copy sorted temp[] back to values[] and update bars
         for (int m = 0; m < temp.length; m++) {
             values[left + m] = temp[m];
+            controller.incrementSwaps();
+
             final int barIndex = left + m;
             final double height = temp[m];
             Platform.runLater(() -> bars[barIndex].setHeight(height));
