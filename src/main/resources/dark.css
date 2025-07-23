@@ -23,6 +23,18 @@
     -fx-text-fill: white;
 }
 
+.combo-box,
+.combo-box .list-cell {
+    -fx-background-color: #2d2d2d;
+    -fx-text-fill: white;
+}
+
+.combo-box .list-cell:hover {
+    -fx-background-color: #3a3a3a;
+    -fx-text-fill: white;
+}
+
+
 .slider {
     -fx-pref-width: 180;
 }
@@ -30,4 +42,22 @@
 .label {
     -fx-font-size: 14px;
     -fx-text-fill: white;
+}
+
+.theme-toggle {
+    -fx-background-color: white;
+    -fx-text-fill: black;
+    -fx-padding: 10px 22px;
+    -fx-background-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.theme-toggle:hover {
+    -fx-background-color: #a7a7a7;
+}
+
+.top-bar {
+    -fx-padding: 10 0 0 10;
+    /* top right bottom left */
 }

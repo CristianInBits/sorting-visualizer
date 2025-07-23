@@ -35,3 +35,21 @@
     -fx-font-size: 14px;
     -fx-text-fill: #333;
 }
+
+.theme-toggle {
+    -fx-background-color: #313131;
+    -fx-text-fill: white;
+    -fx-padding: 10px 22px;
+    -fx-background-radius: 8px;
+    -fx-font-weight: bold;
+    -fx-cursor: hand;
+}
+
+.theme-toggle:hover {
+    -fx-background-color: #686767;
+}
+
+.top-bar {
+    -fx-padding: 10 0 0 10;
+    /* top right bottom left */
+}
