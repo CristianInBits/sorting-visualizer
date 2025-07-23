@@ -7,6 +7,7 @@ import app.algorithms.SelectionSort;
 import app.view.SortingVisualizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
+import javafx.scene.Cursor;
 import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
@@ -34,7 +35,7 @@ public class SortController extends HBox {
 
         this.setSpacing(10);
         this.setPadding(new Insets(10));
-        //this.setStyle("-fx-padding: 10; -fx-alignment: center;");
+        // this.setStyle("-fx-padding: 10; -fx-alignment: center;");
 
         newArrayButton = new Button("New Array");
         startButton = new Button("Start");
@@ -75,6 +76,11 @@ public class SortController extends HBox {
 
         VBox counterBox = new VBox(5, comparisonsLabel, swapsLabel);
         counterBox.setStyle("-fx-alignment: center-left;");
+
+        newArrayButton.setCursor(Cursor.HAND);
+        startButton.setCursor(Cursor.HAND);
+        algorithmSelector.setCursor(Cursor.HAND);
+        speedSlider.setCursor(Cursor.HAND);
 
         this.getChildren().addAll(newArrayButton, startButton, algorithmSelector, speedLabel, speedSlider, counterBox);
 
