@@ -4,21 +4,22 @@ A dynamic sorting algorithm visualizer built with JavaFX. This project helps stu
 
 ## 🚀 Features
 
-- Real-time visualization of sorting algorithms
+- Real-time visualization of multiple sorting algorithms
 - Adjustable animation speed with a slider
-- Interactive controls: generate new array, start animation
+- Interactive controls: generate new array, select algorithm, start animation
+- Real-time counters for comparisons and swaps
+- Automatic disabling of controls during sorting
 - Clean and responsive UI built with JavaFX
-- Automatic disabling of controls during execution
 
 ## 📚 Algorithms Implemented
 
 | Algorithm      | Status |
 |----------------|--------|
 | Bubble Sort    | ✅ Done |
-| Selection Sort | ⏳ Planned |
+| Selection Sort | ✅ Done |
 | Insertion Sort | ⏳ Planned |
-| Merge Sort     | ⏳ Planned |
-| Quick Sort     | ⏳ Planned |
+| Merge Sort     | ✅ Done |
+| Quick Sort     | ✅ Done |
 | Heap Sort      | 🟡 Optional |
 
 ## 🛠️ Technologies
@@ -52,6 +53,8 @@ src/
 │   ├── view/
 │   └── Main.java
 ```
+
+## 📸 Preview
 
 ## 🧑‍💻 Author
 
