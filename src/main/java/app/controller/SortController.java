@@ -9,6 +9,7 @@ import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
 import javafx.scene.control.Button;
+import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
@@ -23,6 +24,14 @@ public class SortController extends HBox {
     private final ComboBox<String> algorithmSelector;
 
     private final SortingVisualizer visualizer;
+
+    private final CheckBox stepModeCheck = new CheckBox("Step-by-step");
+    private final Button nextStepButton = new Button("Next Step");
+    private final Button stopButton = new Button("Stop");
+
+    private final Object stepLock = new Object();
+    private volatile boolean waitingForStep = false;
+    private volatile boolean stopRequested = false;
 
     private int comparisons = 0;
     private int swaps = 0;
@@ -39,6 +48,16 @@ public class SortController extends HBox {
 
         newArrayButton = new Button("New Array");
         startButton = new Button("Start");
+
+        nextStepButton.setDisable(true);
+
+        stepModeCheck.setOnAction(e -> {
+            nextStepButton.setDisable(!stepModeCheck.isSelected());
+        });
+
+        nextStepButton.setOnAction(e -> triggerNextStep());
+
+        stopButton.setOnAction(e -> requestStop());
 
         algorithmSelector = new ComboBox<>();
         algorithmSelector.getItems().addAll(
@@ -82,7 +101,12 @@ public class SortController extends HBox {
         algorithmSelector.setCursor(Cursor.HAND);
         speedSlider.setCursor(Cursor.HAND);
 
-        this.getChildren().addAll(newArrayButton, startButton, algorithmSelector, speedLabel, speedSlider, counterBox);
+        this.getChildren().addAll(
+                newArrayButton, startButton,
+                algorithmSelector,
+                stepModeCheck, nextStepButton, stopButton,
+                speedLabel, speedSlider,
+                counterBox);
 
     }
 
@@ -110,6 +134,44 @@ public class SortController extends HBox {
             comparisonsLabel.setText("Comparisons: 0");
             swapsLabel.setText("Swaps: 0");
         });
+    }
+
+    public boolean isStepModeEnabled() {
+        return stepModeCheck.isSelected();
+    }
+
+    public void waitForNextStep() throws InterruptedException {
+        if (isStepModeEnabled()) {
+            waitingForStep = true;
+            synchronized (stepLock) {
+                while (waitingForStep && !stopRequested) {
+                    stepLock.wait();
+                }
+            }
+        }
+    }
+
+    public void triggerNextStep() {
+        synchronized (stepLock) {
+            waitingForStep = false;
+            stepLock.notify();
+        }
+    }
+
+    public void requestStop() {
+        stopRequested = true;
+        triggerNextStep(); // For safety
+    }
+
+    public boolean isStopRequested() {
+        return stopRequested;
+    }
+
+    public void resetControlsAndState() {
+        setAllControlsDisabled(false);
+        stopRequested = false;
+        waitingForStep = false;
+        resetCounters();
     }
 
 }
