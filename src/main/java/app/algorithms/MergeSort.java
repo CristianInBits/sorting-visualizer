@@ -28,17 +28,19 @@ public class MergeSort implements SortAlgorithm {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
                 controller.resetCounters();
-
                 mergeSort(0, values.length - 1);
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                Platform.runLater(() -> controller.setAllControlsDisabled(false));
+                Platform.runLater(controller::resetControlsAndState);
             }
         }).start();
     }
 
     private void mergeSort(int left, int right) throws InterruptedException {
+        if (controller.isStopRequested())
+            return;
+
         if (left < right) {
             int mid = (left + right) / 2;
             mergeSort(left, mid);
@@ -48,13 +50,20 @@ public class MergeSort implements SortAlgorithm {
     }
 
     private void merge(int left, int mid, int right) throws InterruptedException {
+        if (controller.isStopRequested())
+            return;
+
         int[] temp = new int[right - left + 1];
         int i = left, j = mid + 1, k = 0;
 
         while (i <= mid && j <= right) {
+            if (controller.isStopRequested())
+                return;
+
             highlight(i, Color.RED);
             highlight(j, Color.RED);
             controller.incrementComparisons();
+            controller.waitForNextStep();
             Thread.sleep(delay);
 
             if (values[i] <= values[j]) {
@@ -63,49 +72,61 @@ public class MergeSort implements SortAlgorithm {
                 temp[k++] = values[j++];
             }
 
-            if (i - 1 >= 0)
+            if (i - 1 >= 0 && i - 1 < bars.length)
                 resetColor(i - 1);
-
-            if (j - 1 >= 0)
+            if (j - 1 >= 0 && j - 1 < bars.length)
                 resetColor(j - 1);
-
         }
 
         while (i <= mid) {
+            if (controller.isStopRequested())
+                return;
+
             highlight(i, Color.RED);
+            controller.waitForNextStep();
             Thread.sleep(delay);
             temp[k++] = values[i++];
-            if (i - 1 >= 0)
+            if (i - 1 >= 0 && i - 1 < bars.length)
                 resetColor(i - 1);
-
         }
 
         while (j <= right) {
+            if (controller.isStopRequested())
+                return;
+
             highlight(j, Color.RED);
+            controller.waitForNextStep();
             Thread.sleep(delay);
             temp[k++] = values[j++];
-            if (j - 1 >= 0)
+            if (j - 1 >= 0 && j - 1 < bars.length)
                 resetColor(j - 1);
-
         }
 
-        // Copy sorted temp[] back to values[] and update bars
         for (int m = 0; m < temp.length; m++) {
+            if (controller.isStopRequested())
+                return;
+
             values[left + m] = temp[m];
             controller.incrementSwaps();
 
             final int barIndex = left + m;
             final double height = temp[m];
+
             Platform.runLater(() -> bars[barIndex].setHeight(height));
+            controller.waitForNextStep();
             Thread.sleep(delay);
         }
     }
 
     private void highlight(int index, Color color) {
-        Platform.runLater(() -> bars[index].setFill(color));
+        if (index >= 0 && index < bars.length) {
+            Platform.runLater(() -> bars[index].setFill(color));
+        }
     }
 
     private void resetColor(int index) {
-        Platform.runLater(() -> bars[index].setFill(Color.CORNFLOWERBLUE));
+        if (index >= 0 && index < bars.length) {
+            Platform.runLater(() -> bars[index].setFill(Color.CORNFLOWERBLUE));
+        }
     }
 }
