@@ -30,12 +30,21 @@ public class SelectionSort implements SortAlgorithm {
                 controller.resetCounters();
 
                 for (int i = 0; i < values.length - 1; i++) {
+                    if (controller.isStopRequested())
+                        return;
+
                     int minIndex = i;
                     highlight(minIndex, Color.ORANGE); // current min
+                    controller.waitForNextStep();
+                    Thread.sleep(delay);
 
                     for (int j = i + 1; j < values.length; j++) {
+                        if (controller.isStopRequested())
+                            return;
+
                         highlight(j, Color.RED);
                         controller.incrementComparisons();
+                        controller.waitForNextStep();
                         Thread.sleep(delay);
 
                         if (values[j] < values[minIndex]) {
@@ -50,26 +59,32 @@ public class SelectionSort implements SortAlgorithm {
                     if (minIndex != i) {
                         swap(i, minIndex);
                         controller.incrementSwaps();
+                        controller.waitForNextStep();
                         Thread.sleep(delay);
                     }
 
                     resetColor(i);
                     resetColor(minIndex);
                 }
-            } catch (Exception e) {
+
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                Platform.runLater(() -> controller.setAllControlsDisabled(false));
+                Platform.runLater(controller::resetControlsAndState);
             }
         }).start();
     }
 
     private void highlight(int i, Color color) {
-        Platform.runLater(() -> bars[i].setFill(color));
+        if (i >= 0 && i < bars.length) {
+            Platform.runLater(() -> bars[i].setFill(color));
+        }
     }
 
     private void resetColor(int i) {
-        Platform.runLater(() -> bars[i].setFill(Color.CORNFLOWERBLUE));
+        if (i >= 0 && i < bars.length) {
+            Platform.runLater(() -> bars[i].setFill(Color.CORNFLOWERBLUE));
+        }
     }
 
     private void swap(int i, int j) {

@@ -28,18 +28,19 @@ public class QuickSort implements SortAlgorithm {
             try {
                 Platform.runLater(() -> controller.setAllControlsDisabled(true));
                 controller.resetCounters();
-
                 quickSort(0, values.length - 1);
-
-            } catch (Exception e) {
+            } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                Platform.runLater(() -> controller.setAllControlsDisabled(false));
+                Platform.runLater(controller::resetControlsAndState);
             }
         }).start();
     }
 
     private void quickSort(int low, int high) throws InterruptedException {
+        if (controller.isStopRequested())
+            return;
+
         if (low < high) {
             int pi = partition(low, high);
             quickSort(low, pi - 1);
@@ -49,18 +50,26 @@ public class QuickSort implements SortAlgorithm {
 
     private int partition(int low, int high) throws InterruptedException {
         int pivot = values[high];
-        highlight(high, Color.ORANGE); // highlight pivot
+        highlight(high, Color.ORANGE); // pivot
+        controller.waitForNextStep();
+        Thread.sleep(delay);
+
         int i = low - 1;
 
         for (int j = low; j < high; j++) {
+            if (controller.isStopRequested())
+                return i + 1;
+
             highlight(j, Color.RED);
             controller.incrementComparisons();
+            controller.waitForNextStep();
             Thread.sleep(delay);
 
             if (values[j] < pivot) {
                 i++;
                 swap(i, j);
                 controller.incrementSwaps();
+                controller.waitForNextStep();
                 Thread.sleep(delay);
             }
 
@@ -69,7 +78,9 @@ public class QuickSort implements SortAlgorithm {
 
         swap(i + 1, high);
         controller.incrementSwaps();
+        controller.waitForNextStep();
         Thread.sleep(delay);
+
         resetColor(high);
         resetColor(i + 1);
 
@@ -95,5 +106,4 @@ public class QuickSort implements SortAlgorithm {
     private void resetColor(int i) {
         Platform.runLater(() -> bars[i].setFill(Color.CORNFLOWERBLUE));
     }
-
 }
