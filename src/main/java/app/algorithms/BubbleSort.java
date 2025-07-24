@@ -32,13 +32,19 @@ public class BubbleSort implements SortAlgorithm {
 
                 for (int i = 0; i < values.length - 1; i++) {
                     for (int j = 0; j < values.length - i - 1; j++) {
+
+                        if (controller.isStopRequested())
+                            return;
+
                         highlight(j, j + 1, Color.RED);
                         controller.incrementComparisons();
+                        controller.waitForNextStep();
                         Thread.sleep(delay);
 
                         if (values[j] > values[j + 1]) {
                             swap(j, j + 1);
                             controller.incrementSwaps();
+                            controller.waitForNextStep();
                             Thread.sleep(delay);
                         }
 
@@ -48,7 +54,7 @@ public class BubbleSort implements SortAlgorithm {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
             } finally {
-                Platform.runLater(() -> controller.setAllControlsDisabled(false));
+                Platform.runLater(controller::resetControlsAndState);
             }
         }).start();
     }

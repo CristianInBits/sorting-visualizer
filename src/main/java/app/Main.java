@@ -29,7 +29,7 @@ public class Main extends Application {
         root.setBottom(controller);
         // root.setTop(themeToggle);
 
-        Scene scene = new Scene(root, 800, 600);
+        Scene scene = new Scene(root, 1024, 768);
         scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
         themeToggle.getStyleClass().add("theme-toggle");
 
