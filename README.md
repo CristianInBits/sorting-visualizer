@@ -24,9 +24,9 @@ This project helps students and developers understand how different sorting algo
 |----------------|------------|
 | Bubble Sort    | ✅ Done     |
 | Selection Sort | ✅ Done     |
-| Insertion Sort | ⏳ Planned  |
 | Merge Sort     | ✅ Done     |
 | Quick Sort     | ✅ Done     |
+| Insertion Sort | ⏳ Planned  |
 | Heap Sort      | 🟡 Optional |
 
 ---
@@ -71,25 +71,47 @@ src/
 
 ### 🔁 Bubble Sort Animation
 
-![SelectionSort+BubbleSort](assets/preview/sort.gif)
+<p align="center">
+  <img src="assets/preview/sort.gif" width="300" alt="Sorting animation">
+</p>
 
-### 💡 Light Mode
+### 💡 Light Mode vs 🌙 Dark Mode
 
-![Light Mode](assets/preview/light-mode.png)
+<table align="center">
+  <tr>
+    <td align="center"><strong>Light Mode</strong></td>
+    <td align="center"><strong>Dark Mode</strong></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/preview/light-mode.png" width="400" alt="Light mode UI">
+    </td>
+    <td align="center">
+      <img src="assets/preview/dark-mode.png" width="400" alt="Dark mode UI">
+    </td>
+  </tr>
+</table>
 
-### 🌙 Dark Mode
-
-![Dark Mode](assets/preview/dark-mode.png)
-
-### 🧮 Algorithms
-
-![Algorithms](assets/preview/algorithms.png)
+<table align="center">
+  <tr>
+    <td align="center"><strong>🧮 Algorithms</strong></td>
+    <td align="center"><strong>⏩ Step by step Mode</strong></td>
+  </tr>
+  <tr>
+    <td align="center">
+      <img src="assets/preview/algorithms.png" width="200" alt="Algorithms">
+    </td>
+    <td align="center">
+      <img src="assets/preview/sbs.gif" width="400" alt="sbs">
+    </td>
+  </tr>
+</table>
 
 ---
 
 ## 🧑‍💻 Author
 
-Built with ❤️ by a Computer Engineering student passionate about algorithms, data structures, and clean code.
+Built with ❤️ by a Cristian Laurentiu Sindila, Computer Engineering student passionate about algorithms, data structures, and clean code.
 
 ---
 
