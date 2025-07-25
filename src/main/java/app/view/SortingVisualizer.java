@@ -2,6 +2,9 @@ package app.view;
 
 import java.util.Random;
 
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
@@ -20,7 +23,6 @@ public class SortingVisualizer extends HBox {
         this.setStyle("-fx-alignment: bottom-center;");
         generateRandomArray();
         createBars();
-
     }
 
     private void generateRandomArray() {

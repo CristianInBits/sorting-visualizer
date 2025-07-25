@@ -8,9 +8,11 @@ import app.view.SortingVisualizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Cursor;
+import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
@@ -41,6 +43,10 @@ public class SortController extends HBox {
 
     public SortController(SortingVisualizer visualizer) {
         this.visualizer = visualizer;
+
+        Button aboutButton = new Button("About");
+        aboutButton.setOnAction(e -> showAboutDialog());
+        aboutButton.getStyleClass().add("about-button");
 
         this.setSpacing(10);
         this.setPadding(new Insets(10));
@@ -106,7 +112,8 @@ public class SortController extends HBox {
                 algorithmSelector,
                 stepModeCheck, nextStepButton, stopButton,
                 speedLabel, speedSlider,
-                counterBox);
+                counterBox,
+                aboutButton);
 
     }
 
@@ -172,6 +179,25 @@ public class SortController extends HBox {
         stopRequested = false;
         waitingForStep = false;
         resetCounters();
+    }
+
+    private void showAboutDialog() {
+        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+        alert.setTitle("About");
+        alert.setHeaderText("Sorting Visualizer in JavaFX");
+        alert.setContentText(
+                """
+                        This project visualizes classic sorting algorithms step-by-step to help students understand how they work.
+
+                        👤 Author: Cristian Laurentiu Sindila
+                        🛠️ Built: with Java 17, JavaFX 21, and Maven
+                        💻 GitHub: https://github.com/CristianInBits/sorting-visualizer
+                        """);
+
+        DialogPane dialogPane = alert.getDialogPane();
+        dialogPane.setStyle("-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;");
+
+        alert.showAndWait();
     }
 
 }

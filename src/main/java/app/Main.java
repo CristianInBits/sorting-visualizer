@@ -5,6 +5,9 @@ import app.view.SortingVisualizer;
 import javafx.application.Application;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
+import javafx.scene.control.Alert;
+import javafx.scene.control.Button;
+import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -13,6 +16,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
     @Override
     public void start(Stage primaryStage) {
+
         SortingVisualizer visualizer = new SortingVisualizer();
         SortController controller = new SortController(visualizer);
 
