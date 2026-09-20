@@ -34,25 +34,27 @@ public class Main extends Application {
         // root.setTop(themeToggle);
 
         Scene scene = new Scene(root, 1024, 768);
-        scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
+
+        // Set once. Re-adding it on every click appended another copy to the
+        // node's style class list, which grew without bound as the user
+        // toggled back and forth.
         themeToggle.getStyleClass().add("theme-toggle");
 
-        themeToggle.setOnAction(e -> {
-            scene.getStylesheets().clear();
-            if (themeToggle.isSelected()) {
-                scene.getStylesheets().add(getClass().getResource("/dark.css").toExternalForm());
-                themeToggle.setText("Light Mode");
-                themeToggle.getStyleClass().add("theme-toggle");
-            } else {
-                scene.getStylesheets().add(getClass().getResource("/style.css").toExternalForm());
-                themeToggle.setText("Dark Mode");
-                themeToggle.getStyleClass().add("theme-toggle");
-            }
-        });
+        applyTheme(scene, themeToggle);
+        themeToggle.setOnAction(e -> applyTheme(scene, themeToggle));
 
         primaryStage.setTitle("Sorting Visualizer");
         primaryStage.setScene(scene);
         primaryStage.show();
+    }
+
+    /** Swaps the one active stylesheet and relabels the button to match. */
+    private void applyTheme(Scene scene, ToggleButton themeToggle) {
+        boolean dark = themeToggle.isSelected();
+        String stylesheet = dark ? "/dark.css" : "/style.css";
+
+        scene.getStylesheets().setAll(getClass().getResource(stylesheet).toExternalForm());
+        themeToggle.setText(dark ? "Light Mode" : "Dark Mode");
     }
 
     public static void main(String[] args) {
