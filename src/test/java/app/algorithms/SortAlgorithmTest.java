@@ -23,9 +23,11 @@ class SortAlgorithmTest {
     static Stream<Arguments> algorithms() {
         return Stream.of(
                 arguments(named("Bubble Sort", new BubbleSort())),
+                arguments(named("Insertion Sort", new InsertionSort())),
                 arguments(named("Selection Sort", new SelectionSort())),
+                arguments(named("Merge Sort", new MergeSort())),
                 arguments(named("Quick Sort", new QuickSort())),
-                arguments(named("Merge Sort", new MergeSort())));
+                arguments(named("Heap Sort", new HeapSort())));
     }
 
     @ParameterizedTest

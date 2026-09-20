@@ -5,6 +5,8 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 
 import app.algorithms.BubbleSort;
+import app.algorithms.HeapSort;
+import app.algorithms.InsertionSort;
 import app.algorithms.MergeSort;
 import app.algorithms.QuickSort;
 import app.algorithms.SelectionSort;
@@ -38,15 +40,21 @@ import javafx.scene.layout.VBox;
  */
 public class SortController extends VBox {
 
-    /** What the picker offers, in listed order. The algorithms are stateless. */
+    /**
+     * What the picker offers. Listed quadratic first, then the n log n ones,
+     * so working down the list is roughly working up in sophistication.
+     * The algorithms hold no state, so one instance each is enough.
+     */
     private static final Map<String, SortAlgorithm> ALGORITHMS = algorithms();
 
     private static Map<String, SortAlgorithm> algorithms() {
         Map<String, SortAlgorithm> byName = new LinkedHashMap<>();
         byName.put("Bubble Sort", new BubbleSort());
-        byName.put("Quick Sort", new QuickSort());
+        byName.put("Insertion Sort", new InsertionSort());
         byName.put("Selection Sort", new SelectionSort());
         byName.put("Merge Sort", new MergeSort());
+        byName.put("Quick Sort", new QuickSort());
+        byName.put("Heap Sort", new HeapSort());
         return Collections.unmodifiableMap(byName);
     }
 
