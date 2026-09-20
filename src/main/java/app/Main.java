@@ -5,9 +5,6 @@ import app.view.SortingVisualizer;
 import javafx.application.Application;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.ToggleButton;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.HBox;
@@ -31,7 +28,6 @@ public class Main extends Application {
 
         root.setCenter(visualizer);
         root.setBottom(controller);
-        // root.setTop(themeToggle);
 
         Scene scene = new Scene(root, 1024, 768);
 

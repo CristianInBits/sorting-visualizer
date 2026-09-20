@@ -2,15 +2,13 @@ package app.view;
 
 import java.util.Random;
 
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.DialogPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.shape.Rectangle;
 
 public class SortingVisualizer extends HBox {
 
     private static final int NUM_BARS = 50;
+    private static final int MIN_HEIGHT = 10;
     private static final int MAX_HEIGHT = 300;
     private static final int BAR_WIDTH = 12;
 
@@ -40,7 +38,9 @@ public class SortingVisualizer extends HBox {
         values = new int[NUM_BARS];
         Random rand = new Random();
         for (int i = 0; i < NUM_BARS; i++) {
-            values[i] = rand.nextInt(MAX_HEIGHT) + 10;
+            // nextInt(MAX_HEIGHT) + 10 used to reach 309, overshooting the
+            // maximum it was named after.
+            values[i] = MIN_HEIGHT + rand.nextInt(MAX_HEIGHT - MIN_HEIGHT + 1);
         }
     }
 
