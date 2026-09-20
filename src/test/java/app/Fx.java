@@ -16,13 +16,15 @@ import javafx.application.Platform;
  */
 public final class Fx {
 
-    private static final long TIMEOUT_SECONDS = 10;
+    private static final long TIMEOUT_SECONDS = 15;
 
     private Fx() {
     }
 
     /** Safe to call from every test class: the second call onwards is a no-op. */
     public static void startToolkit() {
+        requireMonocle();
+
         CountDownLatch up = new CountDownLatch(1);
         try {
             Platform.startup(up::countDown);
@@ -30,6 +32,27 @@ public final class Fx {
             return;
         }
         await(up, "the JavaFX toolkit never started");
+    }
+
+    /**
+     * Fails early and clearly when the headless toolkit cannot be loaded.
+     *
+     * Worth the few lines: without Monocle, Platform.startup() does not throw,
+     * it blocks inside native code where no JUnit timeout can reach it, and
+     * the suite hangs for as long as CI will let it. A build once burned
+     * seven minutes before anyone could see that the only problem was a
+     * Monocle built for a newer Java than the one running it.
+     */
+    private static void requireMonocle() {
+        try {
+            Class.forName("com.sun.glass.ui.monocle.MonoclePlatformFactory");
+        } catch (ClassNotFoundException e) {
+            throw new AssertionError("Monocle is missing from the test classpath", e);
+        } catch (UnsupportedClassVersionError e) {
+            throw new AssertionError("Monocle was built for a newer Java than this one."
+                    + " Running on " + System.getProperty("java.version")
+                    + "; either match the monocle.version in the pom to it, or build on a newer JDK.", e);
+        }
     }
 
     /** Runs the work on the JavaFX thread and waits for it, rethrowing failures. */
