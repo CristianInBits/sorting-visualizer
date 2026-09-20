@@ -63,6 +63,12 @@ public class SortingVisualizer extends HBox {
         // set a floor on how narrow the window can get.
         setMinSize(0, 0);
 
+        // Lay the bars out on exact coordinates. Snapping rounds the gap to a
+        // whole pixel, and at 150 bars a gap of 1.7px rounded up to 2 added
+        // almost 50px of width the bars could not give back: they spilled out
+        // of the panel on both sides, since the row is centred.
+        setSnapToPixel(false);
+
         generateRandomArray();
         createBars();
 
