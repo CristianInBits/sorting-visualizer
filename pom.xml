@@ -21,12 +21,6 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.openjfx</groupId>
-            <artifactId>javafx-fxml</artifactId>
-            <version>${javafx.version}</version>
-        </dependency>
-
         <!-- Tests. The algorithms are plain Java, so they need no JavaFX here. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>

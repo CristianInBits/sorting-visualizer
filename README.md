@@ -1,10 +1,10 @@
-﻿<div align="center">
+<div align="center">
 
 # Sorting Visualizer
 
 **Watch classic sorting algorithms work, one step at a time.**
 
-A JavaFX desktop app that animates six classic sorting algorithms â€” with a
+A JavaFX desktop app that animates six classic sorting algorithms — with a
 step-by-step mode you can drive by hand, live counters, and a light and dark
 theme.
 
@@ -21,16 +21,46 @@ theme.
 
 ## Run it
 
+### What you need
+
+**A JDK, version 17 or newer. Nothing else.** Maven ships with the repository
+through its wrapper, and JavaFX arrives as an ordinary dependency, so neither
+has to be installed by hand.
+
+Check what you already have:
+
+```bash
+java -version
+```
+
+If that prints something below 17, or does not run at all, grab a JDK from
+[Adoptium](https://adoptium.net/) and open a new terminal afterwards so the
+change to `PATH` takes effect.
+
+### Start it
+
 ```bash
 git clone https://github.com/CristianInBits/sorting-visualizer.git
 cd sorting-visualizer
 ./mvnw javafx:run
 ```
 
-**Java 17 or newer is the only thing you need to install.** Maven comes with the
-repository through the wrapper, which fetches the pinned version on first use.
+On Windows, use `mvnw.cmd javafx:run` instead.
 
-On Windows, use `mvnw.cmd javafx:run`.
+The first run fetches Maven and about **30 MB** of dependencies, so give it a
+minute. After that it starts in a few seconds. To run the tests instead of the
+app, use `./mvnw test`.
+
+### If it does not start
+
+| What you see | What it means |
+|---|---|
+| `java: command not found`, or `JAVA_HOME is not defined correctly` | No JDK on the `PATH`. Install one and reopen the terminal |
+| `invalid target release: 17`, or a `class file version` complaint | The JDK being used is older than 17. `java -version` says which one |
+| `./mvnw: Permission denied` | The execute bit was lost, usually by downloading the ZIP rather than cloning. `chmod +x mvnw` |
+| `bad interpreter: /bin/sh^M` | `mvnw` picked up Windows line endings. Clone again — the repository pins it to LF through `.gitattributes` |
+| It sits on `Downloading from central` | A proxy or firewall is blocking `repo.maven.apache.org`. Maven reads proxy settings from `~/.m2/settings.xml` |
+| `no main manifest attribute` | You ran `java -jar target/…jar`. That jar is not self-contained; use `./mvnw javafx:run` |
 
 ---
 
@@ -51,7 +81,7 @@ On Windows, use `mvnw.cmd javafx:run`.
 <div align="center">
 <img src="assets/preview/sbs.gif" width="620" alt="Step-by-step mode: each click on Next step advances one comparison or one move, and the counters tick up">
 <br>
-<em>Step-by-step mode â€” one click, one step.</em>
+<em>Step-by-step mode — one click, one step.</em>
 </div>
 
 ---
@@ -61,22 +91,22 @@ On Windows, use `mvnw.cmd javafx:run`.
 <div align="center">
 <img src="assets/preview/sort.gif" width="600" alt="Bubble Sort running: the compared pair is red, and the sorted tail grows from the right">
 <br>
-<em>Bubble Sort â€” the largest value bubbles to the end on every pass.</em>
+<em>Bubble Sort — the largest value bubbles to the end on every pass.</em>
 </div>
 
 <br>
 
 | Algorithm | Comparisons | Moves | Extra memory | Stable |
 |---|---|---|---|---|
-| **Bubble Sort** | O(nÂ²) | O(nÂ²) | O(1) | Yes |
-| **Insertion Sort** | O(nÂ²), O(n) on sorted input | O(nÂ²) | O(1) | Yes |
-| **Selection Sort** | O(nÂ²) | O(n) | O(1) | No |
+| **Bubble Sort** | O(n²) | O(n²) | O(1) | Yes |
+| **Insertion Sort** | O(n²), O(n) on sorted input | O(n²) | O(1) | Yes |
+| **Selection Sort** | O(n²) | O(n) | O(1) | No |
 | **Merge Sort** | O(n log n) | O(n log n) | O(n) | Yes |
-| **Quick Sort** | O(n log n) avg, O(nÂ²) worst | O(n log n) avg | O(log n) | No |
+| **Quick Sort** | O(n log n) avg, O(n²) worst | O(n log n) avg | O(log n) | No |
 | **Heap Sort** | O(n log n) | O(n log n) | O(1) | No |
 
 > **Bubble Sort** is the plain version without the early-exit flag, so it always
-> performs the full n(n âˆ’ 1)/2 comparisons even on an already sorted array.
+> performs the full n(n − 1)/2 comparisons even on an already sorted array.
 > **Insertion Sort** does stop early, which is why it needs about half the
 > comparisons for the same number of moves.
 > **Quick Sort** partitions with Lomuto on the last element, so sorted input is
@@ -89,7 +119,7 @@ On Windows, use `mvnw.cmd javafx:run`.
 
 Averages over 500 random arrays of 50 elements, the same arrays for every
 algorithm, measured by running the real classes through the trace the tests
-use â€” not a separate model of them:
+use — not a separate model of them:
 
 | Algorithm | Comparisons | Moves |
 |---|---:|---:|
@@ -100,7 +130,7 @@ use â€” not a separate model of them:
 | Quick Sort | 262 | 215 |
 | Heap Sort | 415 | 483 |
 
-A **move** is an array write that actually changes a value â€” that is, a bar that
+A **move** is an array write that actually changes a value — that is, a bar that
 changes height. A swap of two different values counts as 2, one merge copy
 counts as 1.
 
@@ -110,7 +140,7 @@ look like it shuffled more data than Quick Sort when it does not.
 
 Two things the table shows nicely: Insertion Sort moves exactly as much data as
 Bubble Sort but asks **half the questions**, and Selection Sort barely moves
-anything â€” it is the one that minimises writes, at the cost of always making
+anything — it is the one that minimises writes, at the cost of always making
 every comparison.
 
 ---
@@ -141,14 +171,14 @@ The algorithms are plain Java. They know nothing about JavaFX, threads or
 timing: each one sorts an `int[]` and reports what it did to a `SortTrace`.
 
 ```
-        BubbleSort Â· SelectionSort Â· QuickSort Â· MergeSort
-                  sort(int[] values, SortTrace trace)
-                                 â”‚
-                 â”Œâ”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”´â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”
-                 â–¼                                â–¼
-          AnimatedTrace                    RecordingTrace
-   bars, colours, delay, stop         counts, replays, asserts
-        (the running app)                   (the tests)
+BubbleSort · InsertionSort · SelectionSort · MergeSort · QuickSort · HeapSort
+                     sort(int[] values, SortTrace trace)
+                                      │
+                      ┌───────────────┴────────────────┐
+                      ▼                                ▼
+                AnimatedTrace                   RecordingTrace
+         bars, colours, delay, stop        counts, replays, asserts
+              (the running app)                   (the tests)
 ```
 
 Two consequences worth having:
@@ -160,7 +190,7 @@ Two consequences worth having:
   cannot quietly disagree with what the animation draws.
 
 Stopping is an exception thrown by the trace, so an algorithm needs no
-`isStopRequested()` checks scattered through its loops â€” it just lets the
+`isStopRequested()` checks scattered through its loops — it just lets the
 exception unwind.
 
 ---
@@ -173,7 +203,7 @@ exception unwind.
 
 30 tests, no JavaFX toolkit, about a second:
 
-- Each algorithm against 200 random arrays, plus the edge cases â€” empty, one
+- Each algorithm against 200 random arrays, plus the edge cases — empty, one
   element, all equal, already sorted, reversed, duplicates, extreme values.
 - Each one **stopped at every single step** of a run, checking the array is
   never left with values lost or invented.
@@ -186,23 +216,23 @@ exception unwind.
 
 ```
 src/main/java/app/
-â”œâ”€â”€ algorithms/   Plain Java. No JavaFX in here.
-â”‚                 Each algorithm sorts an int[] and reports to a SortTrace.
-â”œâ”€â”€ player/       AnimatedTrace turns those steps into the animation;
-â”‚                 StepGate paces the run. The only JavaFX-aware layer.
-â”œâ”€â”€ controller/   Controls, run state, worker thread
-â”œâ”€â”€ view/         Bars and layout. Converts values to pixels, so the
-â”‚                 drawing scales with the window.
-â””â”€â”€ Main.java     Entry point, header and theme switching
+├── algorithms/   Plain Java. No JavaFX in here.
+│                 Each algorithm sorts an int[] and reports to a SortTrace.
+├── player/       AnimatedTrace turns those steps into the animation;
+│                 StepGate paces the run. The only JavaFX-aware layer.
+├── controller/   Controls, run state, worker thread
+├── view/         Bars and layout. Converts values to pixels, so the
+│                 drawing scales with the window.
+└── Main.java     Entry point, header and theme switching
 
 src/main/resources/
-â”œâ”€â”€ base.css      Shape, spacing, typography. No colour literals.
-â”œâ”€â”€ light.css     Palette only
-â””â”€â”€ dark.css      Palette only
+├── base.css      Shape, spacing, typography. No colour literals.
+├── light.css     Palette only
+└── dark.css      Palette only
 
 src/test/java/app/
-â”œâ”€â”€ algorithms/   Headless algorithm tests
-â””â”€â”€ player/       Concurrency tests for the step gate
+├── algorithms/   Headless algorithm tests
+└── player/       Concurrency tests for the step gate
 ```
 
 <div align="center">
@@ -213,14 +243,14 @@ src/test/java/app/
 
 ## Contributing
 
-Bug reports, feature requests and pull requests are all welcome â€” see
+Bug reports, feature requests and pull requests are all welcome — see
 [CONTRIBUTING.md](CONTRIBUTING.md) for the branch naming, the commands to run
 before opening a PR, and the issue templates.
 
 Adding an algorithm is deliberately cheap: a class in `algorithms/` that sorts
 an `int[]` and reports to a `SortTrace`, plus one line in the picker. It then
-inherits the whole test suite â€” correctness, edge cases and the stop-at-every-
-step check â€” without writing a single test. Shell Sort, Comb Sort and Radix
+inherits the whole test suite — correctness, edge cases and the stop-at-every-
+step check — without writing a single test. Shell Sort, Comb Sort and Radix
 Sort would all fit.
 
 ---
