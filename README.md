@@ -11,7 +11,8 @@ This project helps students and developers understand how different sorting algo
 - Step-by-step execution and pause support
 - Adjustable animation speed with a slider
 - Interactive controls: generate new array, select algorithm, start animation
-- Real-time counters for comparisons and swaps
+- Real-time counters for comparisons and moves (array writes that change a value,
+  so the four algorithms stay comparable — Merge Sort performs no swaps at all)
 - Automatic disabling of controls during sorting
 - Clean and responsive UI built with JavaFX
 - About dialog and dark/light theme support

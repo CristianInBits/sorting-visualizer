@@ -42,8 +42,7 @@ public class BubbleSort implements SortAlgorithm {
                         Thread.sleep(delay);
 
                         if (values[j] > values[j + 1]) {
-                            swap(j, j + 1);
-                            controller.incrementSwaps();
+                            controller.addMoves(swap(j, j + 1));
                             controller.waitForNextStep();
                             Thread.sleep(delay);
                         }
@@ -73,7 +72,12 @@ public class BubbleSort implements SortAlgorithm {
         });
     }
 
-    private void swap(int i, int j) {
+    /** Swaps two bars and returns how many of them changed height. */
+    private int swap(int i, int j) {
+        if (values[i] == values[j]) {
+            return 0;
+        }
+
         int temp = values[i];
         values[i] = values[j];
         values[j] = temp;
@@ -83,5 +87,7 @@ public class BubbleSort implements SortAlgorithm {
             bars[i].setHeight(bars[j].getHeight());
             bars[j].setHeight(heightTemp);
         });
+
+        return 2;
     }
 }
