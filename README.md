@@ -59,7 +59,7 @@ On Windows, use `mvnw.cmd javafx:run`.
 ## The algorithms
 
 <div align="center">
-<img src="assets/preview/sort.gif" width="680" alt="Bubble Sort running: the compared pair is red, and the sorted tail grows from the right">
+<img src="assets/preview/sort.gif" width="600" alt="Bubble Sort running: the compared pair is red, and the sorted tail grows from the right">
 <br>
 <em>Bubble Sort — the largest value bubbles to the end on every pass.</em>
 </div>
@@ -191,7 +191,7 @@ src/test/java/app/
 ```
 
 <div align="center">
-<img src="assets/preview/algorithms.png" width="200" alt="The algorithm picker, open, showing Bubble, Quick, Selection and Merge Sort">
+<img src="assets/preview/algorithms.png" width="196" alt="The algorithm picker, open, showing Bubble, Quick, Selection and Merge Sort">
 </div>
 
 ---
