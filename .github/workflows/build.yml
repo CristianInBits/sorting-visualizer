@@ -33,4 +33,5 @@ jobs:
 
       # The tests never start a JavaFX toolkit, so no display is needed.
       - name: Build and test
+        timeout-minutes: 12
         run: ./mvnw -B --no-transfer-progress clean verify

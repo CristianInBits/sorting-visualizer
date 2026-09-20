@@ -16,7 +16,7 @@ import javafx.application.Platform;
  */
 public final class Fx {
 
-    private static final long TIMEOUT_SECONDS = 20;
+    private static final long TIMEOUT_SECONDS = 10;
 
     private Fx() {
     }
