@@ -1,9 +1,17 @@
 package app.controller;
 
+import java.util.Collections;
+import java.util.LinkedHashMap;
+import java.util.Map;
+
 import app.algorithms.BubbleSort;
 import app.algorithms.MergeSort;
 import app.algorithms.QuickSort;
 import app.algorithms.SelectionSort;
+import app.algorithms.SortAlgorithm;
+import app.algorithms.SortTrace;
+import app.algorithms.StoppedException;
+import app.player.AnimatedTrace;
 import app.view.SortingVisualizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -19,6 +27,18 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
 public class SortController extends HBox {
+
+    /** What the picker offers, in listed order. The algorithms are stateless. */
+    private static final Map<String, SortAlgorithm> ALGORITHMS = algorithms();
+
+    private static Map<String, SortAlgorithm> algorithms() {
+        Map<String, SortAlgorithm> byName = new LinkedHashMap<>();
+        byName.put("Bubble Sort", new BubbleSort());
+        byName.put("Quick Sort", new QuickSort());
+        byName.put("Selection Sort", new SelectionSort());
+        byName.put("Merge Sort", new MergeSort());
+        return Collections.unmodifiableMap(byName);
+    }
 
     private final Button newArrayButton;
     private final Button startButton;
@@ -66,11 +86,7 @@ public class SortController extends HBox {
         stopButton.setOnAction(e -> requestStop());
 
         algorithmSelector = new ComboBox<>();
-        algorithmSelector.getItems().addAll(
-                "Bubble Sort",
-                "Quick Sort",
-                "Selection Sort",
-                "Merge Sort");
+        algorithmSelector.getItems().addAll(ALGORITHMS.keySet());
 
         algorithmSelector.setPromptText("Select Algorithm");
         algorithmSelector.setPrefWidth(150);
@@ -84,18 +100,9 @@ public class SortController extends HBox {
         newArrayButton.setOnAction(e -> visualizer.regenerateArray());
 
         startButton.setOnAction(e -> {
-            String selected = algorithmSelector.getValue();
-            int delay = (int) speedSlider.getValue();
-
-            if (selected == null)
-                return;
-
-            switch (selected) {
-                case "Bubble Sort" -> new BubbleSort(visualizer, this, delay).sort();
-                case "Quick Sort" -> new QuickSort(visualizer, this, delay).sort();
-                case "Selection Sort" -> new SelectionSort(visualizer, this, delay).sort();
-                case "Merge Sort" -> new MergeSort(visualizer, this, delay).sort();
-                default -> System.out.println("Unsupported algorithm: " + selected);
+            SortAlgorithm algorithm = ALGORITHMS.get(algorithmSelector.getValue());
+            if (algorithm != null) {
+                startSort(algorithm, (int) speedSlider.getValue());
             }
         });
 
@@ -115,6 +122,34 @@ public class SortController extends HBox {
                 counterBox,
                 aboutButton);
 
+    }
+
+    /**
+     * Runs the algorithm on a worker thread, animating it through an
+     * {@link AnimatedTrace}. Called from the JavaFX thread, so the controls
+     * are disabled directly rather than through Platform.runLater.
+     */
+    private void startSort(SortAlgorithm algorithm, int delay) {
+        setAllControlsDisabled(true);
+        resetCounters();
+
+        int[] values = visualizer.getValues();
+        SortTrace trace = new AnimatedTrace(visualizer, this, delay);
+
+        Thread worker = new Thread(() -> {
+            try {
+                algorithm.sort(values, trace);
+            } catch (StoppedException stopped) {
+                // The user pressed Stop; the finally block below tidies up.
+            } finally {
+                Platform.runLater(this::resetControlsAndState);
+            }
+        }, "sort-worker");
+
+        // Daemon, so a run in progress cannot keep the JVM alive after the
+        // window is closed.
+        worker.setDaemon(true);
+        worker.start();
     }
 
     public void setAllControlsDisabled(boolean disabled) {
@@ -195,9 +230,9 @@ public class SortController extends HBox {
         // resetCounters() when it starts, so zeroing them here only wiped the
         // result before it could be read.
 
-        // A stopped run returns before its pending resetColor calls, so the
-        // bars it had highlighted must be cleared here.
-        visualizer.resetBarColors();
+        // A stopped run abandons its highlights, and may have left a bar
+        // height unapplied, so redraw the bars from the array.
+        visualizer.refreshBars();
     }
 
     private void showAboutDialog() {

@@ -1,93 +1,21 @@
 package app.algorithms;
 
-import app.view.SortingVisualizer;
-import app.controller.SortController;
-
-import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
+/** Repeatedly walks the array, bubbling each largest value to the end. */
 public class BubbleSort implements SortAlgorithm {
 
-    private final SortingVisualizer visualizer;
-    private final int[] values;
-    private final Rectangle[] bars;
-    private final int delay;
-    private final SortController controller;
-
-    public BubbleSort(SortingVisualizer visualizer, SortController controller, int delay) {
-        this.visualizer = visualizer;
-        this.controller = controller;
-        this.values = visualizer.getValues();
-        this.bars = visualizer.getBars();
-        this.delay = delay;
-    }
-
     @Override
-    public void sort() {
-        new Thread(() -> {
-            try {
-                Platform.runLater(() -> controller.setAllControlsDisabled(true));
-                controller.resetCounters();
+    public void sort(int[] values, SortTrace trace) throws StoppedException {
+        for (int i = 0; i < values.length - 1; i++) {
+            for (int j = 0; j < values.length - i - 1; j++) {
+                trace.compared(j, j + 1);
 
-                for (int i = 0; i < values.length - 1; i++) {
-                    for (int j = 0; j < values.length - i - 1; j++) {
-
-                        if (controller.isStopRequested())
-                            return;
-
-                        highlight(j, j + 1, Color.RED);
-                        controller.incrementComparisons();
-                        controller.waitForNextStep();
-                        Thread.sleep(delay);
-
-                        if (values[j] > values[j + 1]) {
-                            controller.addMoves(swap(j, j + 1));
-                            controller.waitForNextStep();
-                            Thread.sleep(delay);
-                        }
-
-                        resetColor(j, j + 1);
-                    }
+                if (values[j] > values[j + 1]) {
+                    int temp = values[j];
+                    values[j] = values[j + 1];
+                    values[j + 1] = temp;
+                    trace.swapped(j, j + 1);
                 }
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                Platform.runLater(controller::resetControlsAndState);
             }
-        }).start();
-    }
-
-    private void highlight(int i, int j, Color color) {
-        Platform.runLater(() -> {
-            bars[i].setFill(color);
-            bars[j].setFill(color);
-        });
-    }
-
-    private void resetColor(int i, int j) {
-        Platform.runLater(() -> {
-            bars[i].setFill(Color.CORNFLOWERBLUE);
-            bars[j].setFill(Color.CORNFLOWERBLUE);
-        });
-    }
-
-    /** Swaps two bars and returns how many of them changed height. */
-    private int swap(int i, int j) {
-        if (values[i] == values[j]) {
-            return 0;
         }
-
-        int temp = values[i];
-        values[i] = values[j];
-        values[j] = temp;
-
-        Platform.runLater(() -> {
-            double heightTemp = bars[i].getHeight();
-            bars[i].setHeight(bars[j].getHeight());
-            bars[j].setHeight(heightTemp);
-        });
-
-        return 2;
     }
 }

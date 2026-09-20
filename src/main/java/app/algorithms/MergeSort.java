@@ -1,134 +1,66 @@
 package app.algorithms;
 
-import app.controller.SortController;
-import app.view.SortingVisualizer;
-import javafx.application.Platform;
-import javafx.scene.paint.Color;
-import javafx.scene.shape.Rectangle;
-
+/** Splits the range in half, sorts each half, then merges through a buffer. */
 public class MergeSort implements SortAlgorithm {
 
-    private final SortingVisualizer visualizer;
-    private final SortController controller;
-    private final int[] values;
-    private final Rectangle[] bars;
-    private final int delay;
-
-    public MergeSort(SortingVisualizer visualizer, SortController controller, int delay) {
-        this.visualizer = visualizer;
-        this.controller = controller;
-        this.values = visualizer.getValues();
-        this.bars = visualizer.getBars();
-        this.delay = delay;
-    }
-
     @Override
-    public void sort() {
-        new Thread(() -> {
-            try {
-                Platform.runLater(() -> controller.setAllControlsDisabled(true));
-                controller.resetCounters();
-                mergeSort(0, values.length - 1);
-            } catch (InterruptedException e) {
-                Thread.currentThread().interrupt();
-            } finally {
-                Platform.runLater(controller::resetControlsAndState);
-            }
-        }).start();
+    public void sort(int[] values, SortTrace trace) throws StoppedException {
+        mergeSort(values, trace, 0, values.length - 1);
     }
 
-    private void mergeSort(int left, int right) throws InterruptedException {
-        if (controller.isStopRequested())
-            return;
-
+    private void mergeSort(int[] values, SortTrace trace, int left, int right) throws StoppedException {
         if (left < right) {
             int mid = (left + right) / 2;
-            mergeSort(left, mid);
-            mergeSort(mid + 1, right);
-            merge(left, mid, right);
+            mergeSort(values, trace, left, mid);
+            mergeSort(values, trace, mid + 1, right);
+            merge(values, trace, left, mid, right);
         }
     }
 
-    private void merge(int left, int mid, int right) throws InterruptedException {
-        if (controller.isStopRequested())
-            return;
-
-        int[] temp = new int[right - left + 1];
-        int i = left, j = mid + 1, k = 0;
+    private void merge(int[] values, SortTrace trace, int left, int mid, int right) throws StoppedException {
+        int[] buffer = new int[right - left + 1];
+        int i = left;
+        int j = mid + 1;
+        int k = 0;
 
         while (i <= mid && j <= right) {
-            if (controller.isStopRequested())
-                return;
-
-            highlight(i, Color.RED);
-            highlight(j, Color.RED);
-            controller.incrementComparisons();
-            controller.waitForNextStep();
-            Thread.sleep(delay);
-
-            // Clear the two bars highlighted above before the indices move.
-            // Only one of them advances, so resetting i-1 / j-1 left the
-            // other pointer red for good and cleared an unrelated bar instead.
-            resetColor(i);
-            resetColor(j);
+            trace.compared(i, j);
 
             if (values[i] <= values[j]) {
-                temp[k++] = values[i++];
+                buffer[k++] = values[i++];
             } else {
-                temp[k++] = values[j++];
+                buffer[k++] = values[j++];
             }
         }
 
+        // Whichever half still has elements is already sorted, so it is
+        // copied across without further comparisons.
         while (i <= mid) {
-            if (controller.isStopRequested())
-                return;
-
-            highlight(i, Color.RED);
-            controller.waitForNextStep();
-            Thread.sleep(delay);
-            resetColor(i);
-            temp[k++] = values[i++];
+            buffer[k++] = values[i++];
         }
-
         while (j <= right) {
-            if (controller.isStopRequested())
-                return;
-
-            highlight(j, Color.RED);
-            controller.waitForNextStep();
-            Thread.sleep(delay);
-            resetColor(j);
-            temp[k++] = values[j++];
+            buffer[k++] = values[j++];
         }
 
-        for (int m = 0; m < temp.length; m++) {
-            if (controller.isStopRequested())
-                return;
+        // The copy-back must not be abandoned half way. The buffer is a
+        // rearrangement of this very range, so writing only part of it back
+        // duplicates some values and loses others. Finish the range first,
+        // then report the stop.
+        StoppedException stopped = null;
+        for (int m = 0; m < buffer.length; m++) {
+            values[left + m] = buffer[m];
 
-            // A copy that writes back the value already there moves nothing,
-            // so it must not be counted: it inflated the old swap counter by
-            // about 30% on a 50-bar array.
-            controller.addMoves(values[left + m] == temp[m] ? 0 : 1);
-            values[left + m] = temp[m];
-
-            final int barIndex = left + m;
-            final double height = temp[m];
-
-            Platform.runLater(() -> bars[barIndex].setHeight(height));
-            controller.waitForNextStep();
-            Thread.sleep(delay);
+            if (stopped == null) {
+                try {
+                    trace.wrote(left + m, buffer[m]);
+                } catch (StoppedException e) {
+                    stopped = e;
+                }
+            }
         }
-    }
 
-    private void highlight(int index, Color color) {
-        if (index >= 0 && index < bars.length) {
-            Platform.runLater(() -> bars[index].setFill(color));
-        }
-    }
-
-    private void resetColor(int index) {
-        if (index >= 0 && index < bars.length) {
-            Platform.runLater(() -> bars[index].setFill(Color.CORNFLOWERBLUE));
+        if (stopped != null) {
+            throw stopped;
         }
     }
 }

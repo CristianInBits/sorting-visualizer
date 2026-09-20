@@ -36,7 +36,8 @@ This project helps students and developers understand how different sorting algo
 
 - Java 17+
 - JavaFX 21+
-- Maven
+- Maven (via the bundled wrapper)
+- JUnit 5
 
 ---
 
@@ -60,15 +61,37 @@ On Windows (CMD or PowerShell) use `mvnw.cmd clean javafx:run`.
 
 ---
 
+## 🧪 Tests
+
+The algorithms carry no user interface, so the suite runs without starting a
+JavaFX toolkit:
+
+```bash
+./mvnw test
+```
+
+Every algorithm is checked against random arrays and edge cases, and each one
+is also replayed from the steps it reported, so an algorithm cannot quietly
+disagree with what the animation shows.
+
+---
+
 ## 📦 Project Structure
 
 ```bash
-src/
-├── app/
-│   ├── algorithms/   # Sorting algorithm implementations
-│   ├── controller/   # UI event handling and state
-│   ├── view/         # JavaFX layout and visual logic
-│   └── Main.java     # Application entry point
+src/main/java/app/
+├── algorithms/   # The algorithms, as plain Java. No JavaFX in here.
+│                 # Each one sorts an int[] and reports its steps to a
+│                 # SortTrace, so the same code drives the animation and
+│                 # the tests.
+├── player/       # AnimatedTrace: turns those steps into the animation.
+│                 # The only place that knows about bars, colours and timing.
+├── controller/   # Controls, run state, worker thread
+├── view/         # Bars and layout
+└── Main.java     # Application entry point
+
+src/test/java/app/
+└── algorithms/   # Headless tests: no toolkit, no window, ~0.1 s
 ```
 
 ---
