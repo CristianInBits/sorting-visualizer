@@ -1,0 +1,315 @@
+/*
+ * Shape, spacing and typography for the whole app.
+ *
+ * No colour literals live here. Every colour is a looked-up variable that
+ * light.css or dark.css defines, so a theme is a short palette file rather
+ * than a second copy of this stylesheet.
+ */
+
+/* ------------------------------------------------------------------ shell */
+
+.root {
+    -fx-font-family: "Segoe UI", "Inter", sans-serif;
+    -fx-font-size: 13px;
+    -fx-background-color: -sv-bg;
+}
+
+.app-root {
+    -fx-background-color: -sv-bg;
+}
+
+.label {
+    -fx-text-fill: -sv-text;
+}
+
+/* ----------------------------------------------------------------- header */
+
+.header {
+    -fx-padding: 18 24 14 24;
+    -fx-spacing: 12;
+}
+
+.title-box {
+    -fx-spacing: 1;
+}
+
+.app-title {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -sv-text;
+}
+
+.app-subtitle {
+    -fx-font-size: 12px;
+    -fx-text-fill: -sv-text-muted;
+}
+
+/* ----------------------------------------------------------------- canvas */
+
+.canvas {
+    -fx-background-color: -sv-surface;
+    -fx-background-radius: 14;
+    -fx-border-color: -sv-border;
+    -fx-border-radius: 14;
+    -fx-padding: 22 22 18 22;
+}
+
+.visualizer {
+    -fx-background-color: transparent;
+}
+
+.sort-bar {
+    -fx-fill: -sv-bar;
+    -fx-arc-width: 5;
+    -fx-arc-height: 5;
+}
+
+.sort-bar.comparing {
+    -fx-fill: -sv-bar-compare;
+}
+
+.sort-bar.marked {
+    -fx-fill: -sv-bar-mark;
+}
+
+/* --------------------------------------------------------------- controls */
+
+.controls {
+    -fx-padding: 16 24 20 24;
+    -fx-spacing: 14;
+}
+
+.control-row {
+    -fx-spacing: 18;
+}
+
+.field {
+    -fx-spacing: 5;
+}
+
+.field-caption {
+    -fx-font-size: 11px;
+    -fx-text-fill: -sv-text-muted;
+}
+
+.slider-row {
+    -fx-spacing: 10;
+}
+
+.slider-value {
+    -fx-font-size: 12px;
+    -fx-text-fill: -sv-text-muted;
+    -fx-min-width: 48;
+}
+
+.button-group {
+    -fx-spacing: 8;
+}
+
+.divider {
+    -fx-padding: 0 2 0 2;
+}
+
+.divider .line {
+    -fx-border-color: -sv-border;
+    -fx-border-width: 0 1 0 0;
+}
+
+/* ------------------------------------------------------------------ stats */
+
+.stats {
+    -fx-spacing: 10;
+}
+
+.stat {
+    -fx-background-color: -sv-surface;
+    -fx-background-radius: 10;
+    -fx-border-color: -sv-border;
+    -fx-border-radius: 10;
+    -fx-padding: 7 18 8 18;
+    -fx-spacing: 0;
+    -fx-min-width: 108;
+}
+
+.stat-caption {
+    -fx-font-size: 11px;
+    -fx-text-fill: -sv-text-muted;
+}
+
+.stat-value {
+    -fx-font-size: 19px;
+    -fx-font-weight: bold;
+    -fx-text-fill: -sv-text;
+}
+
+/* ---------------------------------------------------------------- buttons */
+
+.button,
+.toggle-button {
+    -fx-background-color: -sv-surface;
+    -fx-text-fill: -sv-text;
+    -fx-border-color: -sv-border;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-padding: 8 16 8 16;
+    -fx-cursor: hand;
+}
+
+.button:hover,
+.toggle-button:hover {
+    -fx-background-color: -sv-surface-alt;
+}
+
+.button:pressed,
+.toggle-button:pressed {
+    -fx-background-color: -sv-border;
+}
+
+.button:disabled,
+.toggle-button:disabled {
+    -fx-opacity: 0.45;
+}
+
+.button:focused,
+.toggle-button:focused,
+.combo-box:focused,
+.check-box:focused {
+    -fx-border-color: -sv-accent;
+}
+
+/* Start: the one action the eye should land on first. */
+.button.primary {
+    -fx-background-color: -sv-accent;
+    -fx-text-fill: -sv-on-accent;
+    -fx-border-color: transparent;
+    -fx-font-weight: bold;
+}
+
+.button.primary:hover {
+    -fx-background-color: -sv-accent-hover;
+}
+
+.button.primary:pressed {
+    -fx-background-color: -sv-accent-hover;
+}
+
+/* Stop: outlined until hovered, so it reads as available but not inviting. */
+.button.danger {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sv-danger;
+    -fx-border-color: -sv-danger;
+}
+
+.button.danger:hover {
+    -fx-background-color: -sv-danger;
+    -fx-text-fill: -sv-on-accent;
+}
+
+.button.ghost {
+    -fx-background-color: transparent;
+}
+
+.button.ghost:hover {
+    -fx-background-color: -sv-surface-alt;
+}
+
+.theme-toggle:selected {
+    -fx-background-color: -sv-accent;
+    -fx-text-fill: -sv-on-accent;
+    -fx-border-color: transparent;
+}
+
+.theme-toggle:selected:hover {
+    -fx-background-color: -sv-accent-hover;
+}
+
+/* -------------------------------------------------------------- combo box */
+
+.combo-box {
+    -fx-background-color: -sv-surface;
+    -fx-border-color: -sv-border;
+    -fx-background-radius: 9;
+    -fx-border-radius: 9;
+    -fx-padding: 2 4 2 4;
+}
+
+.combo-box:hover {
+    -fx-background-color: -sv-surface-alt;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: -sv-text;
+    -fx-padding: 6 6 6 8;
+}
+
+.combo-box .arrow {
+    -fx-background-color: -sv-text-muted;
+}
+
+.combo-box-popup .list-view {
+    -fx-background-color: -sv-surface;
+    -fx-border-color: -sv-border;
+    -fx-background-radius: 10;
+    -fx-border-radius: 10;
+    -fx-padding: 4;
+}
+
+.combo-box-popup .list-view .list-cell {
+    -fx-background-color: transparent;
+    -fx-background-radius: 7;
+    -fx-text-fill: -sv-text;
+    -fx-padding: 7 12 7 12;
+}
+
+.combo-box-popup .list-view .list-cell:filled:hover,
+.combo-box-popup .list-view .list-cell:filled:selected {
+    -fx-background-color: -sv-accent;
+    -fx-text-fill: -sv-on-accent;
+}
+
+/* ----------------------------------------------------------------- slider */
+
+.slider .track {
+    -fx-background-color: -sv-surface-alt;
+    -fx-background-radius: 4;
+    -fx-pref-height: 5;
+}
+
+.slider .thumb {
+    -fx-background-color: -sv-accent;
+    -fx-background-radius: 20;
+    -fx-pref-width: 15;
+    -fx-pref-height: 15;
+}
+
+.slider:disabled .thumb {
+    -fx-background-color: -sv-text-muted;
+}
+
+/* --------------------------------------------------------------- checkbox */
+
+.check-box {
+    -fx-text-fill: -sv-text;
+}
+
+.check-box .box {
+    -fx-background-color: -sv-surface;
+    -fx-border-color: -sv-border;
+    -fx-background-radius: 5;
+    -fx-border-radius: 5;
+    -fx-padding: 3;
+}
+
+.check-box:hover .box {
+    -fx-border-color: -sv-accent;
+}
+
+.check-box:selected .box {
+    -fx-background-color: -sv-accent;
+    -fx-border-color: -sv-accent;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: -sv-on-accent;
+}

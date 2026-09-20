@@ -6,8 +6,6 @@ import app.controller.SortController;
 import app.view.SortingVisualizer;
 
 import javafx.application.Platform;
-import javafx.collections.ObservableList;
-import javafx.scene.shape.Rectangle;
 
 /**
  * Turns the steps an algorithm reports into the on-screen animation.
@@ -19,9 +17,9 @@ import javafx.scene.shape.Rectangle;
  */
 public class AnimatedTrace implements SortTrace {
 
+    private final SortingVisualizer visualizer;
     private final SortController controller;
     private final StepGate gate;
-    private final Rectangle[] bars;
     private final int[] values;
     private final int delay;
 
@@ -36,19 +34,19 @@ public class AnimatedTrace implements SortTrace {
     private final int[] displayed;
 
     public AnimatedTrace(SortingVisualizer visualizer, SortController controller, StepGate gate, int delay) {
+        this.visualizer = visualizer;
         this.controller = controller;
         this.gate = gate;
-        this.bars = visualizer.getBars();
         this.values = visualizer.getValues();
         this.delay = delay;
-        this.marked = new boolean[bars.length];
+        this.marked = new boolean[this.values.length];
         this.displayed = this.values.clone();
     }
 
     @Override
     public void compared(int i, int j) throws StoppedException {
-        state(i, SortingVisualizer.COMPARING_CLASS);
-        state(j, SortingVisualizer.COMPARING_CLASS);
+        comparing(i);
+        comparing(j);
         controller.incrementComparisons();
 
         frame();
@@ -77,8 +75,8 @@ public class AnimatedTrace implements SortTrace {
         controller.addMoves(moved);
 
         Platform.runLater(() -> {
-            bars[i].setHeight(heightI);
-            bars[j].setHeight(heightJ);
+            visualizer.showValue(i, heightI);
+            visualizer.showValue(j, heightJ);
         });
 
         frame();
@@ -92,7 +90,7 @@ public class AnimatedTrace implements SortTrace {
         displayed[index] = value;
         controller.addMoves(moved);
 
-        Platform.runLater(() -> bars[index].setHeight(value));
+        Platform.runLater(() -> visualizer.showValue(index, value));
 
         frame();
     }
@@ -132,22 +130,24 @@ public class AnimatedTrace implements SortTrace {
         }
     }
 
+    /**
+     * Shows a bar as taking part in the comparison, unless the algorithm is
+     * holding it. A pivot compared against every element would otherwise
+     * spend the whole partition flashing red instead of staying marked.
+     */
+    private void comparing(int index) {
+        if (!marked[index]) {
+            state(index, SortingVisualizer.COMPARING_CLASS);
+        }
+    }
+
     /** Returns a bar to its resting look, keeping any mark it still carries. */
     private void restore(int index) {
         state(index, marked[index] ? SortingVisualizer.MARKED_CLASS : null);
     }
 
-    /**
-     * Puts a bar in exactly one visual state; null means idle. The removeAll
-     * also keeps the list from accumulating duplicates over a long run.
-     */
+    /** Puts a bar in exactly one visual state; null means idle. */
     private void state(int index, String styleClass) {
-        Platform.runLater(() -> {
-            ObservableList<String> classes = bars[index].getStyleClass();
-            classes.removeAll(SortingVisualizer.COMPARING_CLASS, SortingVisualizer.MARKED_CLASS);
-            if (styleClass != null) {
-                classes.add(styleClass);
-            }
-        });
+        Platform.runLater(() -> visualizer.setBarState(index, styleClass));
     }
 }

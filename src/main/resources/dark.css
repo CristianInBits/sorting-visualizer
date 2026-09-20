@@ -1,76 +1,22 @@
+/*
+ * Dark palette. Only colours; base.css owns everything else.
+ */
+
 .root {
-    -fx-background-color: #1e1e1e;
-    -fx-font-family: "Segoe UI", sans-serif;
-}
+    -sv-bg:           #13161c;
+    -sv-surface:      #1b1f27;
+    -sv-surface-alt:  #262c37;
+    -sv-border:       #2f3643;
 
-.button {
-    -fx-background-color: #3a3d41;
-    -fx-text-fill: white;
-    -fx-padding: 6px 14px;
-    -fx-background-radius: 8px;
-    -fx-cursor: hand;
-}
+    -sv-text:         #e6e9ef;
+    -sv-text-muted:   #949cae;
 
-.button:hover {
-    -fx-background-color: #505355;
-}
+    -sv-accent:       #4b8bff;
+    -sv-accent-hover: #3a78e8;
+    -sv-on-accent:    #ffffff;
+    -sv-danger:       #f0595c;
 
-.combo-box {
-    -fx-background-color: #2d2d2d;
-    -fx-border-color: #888;
-    -fx-border-radius: 6px;
-    -fx-padding: 4px;
-    -fx-text-fill: white;
-}
-
-.combo-box,
-.combo-box .list-cell {
-    -fx-background-color: #2d2d2d;
-    -fx-text-fill: white;
-}
-
-.combo-box .list-cell:hover {
-    -fx-background-color: #3a3a3a;
-    -fx-text-fill: white;
-}
-
-
-.slider {
-    -fx-pref-width: 180;
-}
-
-.label {
-    -fx-font-size: 14px;
-    -fx-text-fill: white;
-}
-
-.theme-toggle {
-    -fx-background-color: white;
-    -fx-text-fill: black;
-    -fx-padding: 10px 22px;
-    -fx-background-radius: 8px;
-    -fx-font-weight: bold;
-    -fx-cursor: hand;
-}
-
-.theme-toggle:hover {
-    -fx-background-color: #a7a7a7;
-}
-
-.top-bar {
-    -fx-padding: 10 0 0 10;
-    /* top right bottom left */
-}
-
-/* Bars. Lifted and softened so they read against the dark background. */
-.sort-bar {
-    -fx-fill: #5b8dd9;
-}
-
-.sort-bar.comparing {
-    -fx-fill: #ff6b6b;
-}
-
-.sort-bar.marked {
-    -fx-fill: #ffb74d;
+    -sv-bar:          #5b8dd9;
+    -sv-bar-compare:  #ff6b6b;
+    -sv-bar-mark:     #ffb74d;
 }

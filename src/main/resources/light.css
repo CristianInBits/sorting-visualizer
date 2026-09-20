@@ -1,0 +1,22 @@
+/*
+ * Light palette. Only colours; base.css owns everything else.
+ */
+
+.root {
+    -sv-bg:           #f4f6fa;
+    -sv-surface:      #ffffff;
+    -sv-surface-alt:  #eceff5;
+    -sv-border:       #dde2ea;
+
+    -sv-text:         #1b2333;
+    -sv-text-muted:   #6b7487;
+
+    -sv-accent:       #2f6fed;
+    -sv-accent-hover: #2159cc;
+    -sv-on-accent:    #ffffff;
+    -sv-danger:       #d94045;
+
+    -sv-bar:          #6f9bf0;
+    -sv-bar-compare:  #e0484b;
+    -sv-bar-mark:     #f2a03d;
+}

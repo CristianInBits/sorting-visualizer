@@ -16,8 +16,9 @@ This project helps students and developers understand how different sorting algo
 - Real-time counters for comparisons and moves (array writes that change a value,
   so the four algorithms stay comparable — Merge Sort performs no swaps at all)
 - Automatic disabling of controls during sorting
-- Clean and responsive UI built with JavaFX
-- About dialog and dark/light theme support
+- Bars that fill the window and follow it as it is resized
+- Grouped controls: what to run, how to run it, and what it cost
+- About dialog and dark/light theme support, bars included
 
 ---
 
@@ -89,11 +90,18 @@ src/main/java/app/
 ├── player/       # AnimatedTrace: turns those steps into the animation.
 │                 # The only place that knows about bars, colours and timing.
 ├── controller/   # Controls, run state, worker thread
-├── view/         # Bars and layout
+├── view/         # Bars and layout. Owns the value-to-pixel conversion,
+│                 # so the drawing scales with the window.
 └── Main.java     # Application entry point
 
 src/test/java/app/
-└── algorithms/   # Headless tests: no toolkit, no window, ~0.1 s
+├── algorithms/   # Headless tests: no toolkit, no window, ~0.1 s
+└── player/       # Concurrency tests for the step-by-step gate
+
+src/main/resources/
+├── base.css      # Shape, spacing and typography. No colour literals.
+├── light.css     # Palette only
+└── dark.css      # Palette only
 ```
 
 ---

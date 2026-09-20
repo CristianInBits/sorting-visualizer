@@ -15,19 +15,28 @@ import app.player.AnimatedTrace;
 import app.player.StepGate;
 import app.view.SortingVisualizer;
 import javafx.application.Platform;
-import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Cursor;
-import javafx.scene.control.Alert;
+import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.ComboBox;
-import javafx.scene.control.DialogPane;
 import javafx.scene.control.Label;
+import javafx.scene.control.Separator;
 import javafx.scene.control.Slider;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 
-public class SortController extends HBox {
+/**
+ * The control panel below the bars.
+ *
+ * Laid out as two rows rather than one long strip: what to run on top, and
+ * how to run it plus the resulting counts below, so related controls sit
+ * together instead of being lined up in the order they were written.
+ */
+public class SortController extends VBox {
 
     /** What the picker offers, in listed order. The algorithms are stateless. */
     private static final Map<String, SortAlgorithm> ALGORITHMS = algorithms();
@@ -41,16 +50,18 @@ public class SortController extends HBox {
         return Collections.unmodifiableMap(byName);
     }
 
-    private final Button newArrayButton;
-    private final Button startButton;
-    private final Slider speedSlider;
-    private final ComboBox<String> algorithmSelector;
+    /** Shared height for the controls on the setup row, so they line up. */
+    private static final double CONTROL_HEIGHT = 32;
+
+    private final Button newArrayButton = new Button("New array");
+    private final Button startButton = new Button("Start");
+    private final Button stopButton = new Button("Stop");
+    private final Button nextStepButton = new Button("Next step");
+    private final CheckBox stepModeCheck = new CheckBox("Step by step");
+    private final ComboBox<String> algorithmSelector = new ComboBox<>();
+    private final Slider speedSlider = new Slider(1, 200, 30);
 
     private final SortingVisualizer visualizer;
-
-    private final CheckBox stepModeCheck = new CheckBox("Step-by-step");
-    private final Button nextStepButton = new Button("Next Step");
-    private final Button stopButton = new Button("Stop");
 
     /** Owns step-by-step mode and the stop request, off the JavaFX thread. */
     private final StepGate gate = new StepGate();
@@ -58,21 +69,126 @@ public class SortController extends HBox {
     private int comparisons = 0;
     private int moves = 0;
 
-    private final Label comparisonsLabel = new Label("Comparisons: 0");
-    private final Label movesLabel = new Label("Moves: 0");
+    private final Label comparisonsLabel = new Label("0");
+    private final Label movesLabel = new Label("0");
+    private final Label delayLabel = new Label();
 
     public SortController(SortingVisualizer visualizer) {
         this.visualizer = visualizer;
 
-        Button aboutButton = new Button("About");
-        aboutButton.setOnAction(e -> showAboutDialog());
-        aboutButton.getStyleClass().add("about-button");
+        getStyleClass().add("controls");
 
-        this.setSpacing(10);
-        this.setPadding(new Insets(10));
+        buildAlgorithmSelector();
+        buildSpeedSlider();
+        wireActions();
 
-        newArrayButton = new Button("New Array");
-        startButton = new Button("Start");
+        getChildren().addAll(setupRow(), runRow());
+    }
+
+    // ---------------------------------------------------------------- layout
+
+    /** Top row: what to run. */
+    private HBox setupRow() {
+        HBox row = new HBox(field("Algorithm", algorithmSelector), speedField());
+        row.getStyleClass().add("control-row");
+        row.setAlignment(Pos.BOTTOM_LEFT);
+        return row;
+    }
+
+    /** Bottom row: how to run it, and what it cost. */
+    private HBox runRow() {
+        HBox primary = new HBox(startButton, stopButton, newArrayButton);
+        primary.getStyleClass().add("button-group");
+        primary.setAlignment(Pos.CENTER_LEFT);
+
+        HBox stepping = new HBox(stepModeCheck, nextStepButton);
+        stepping.getStyleClass().add("button-group");
+        stepping.setAlignment(Pos.CENTER_LEFT);
+
+        HBox stats = new HBox(stat("Comparisons", comparisonsLabel), stat("Moves", movesLabel));
+        stats.getStyleClass().add("stats");
+
+        HBox row = new HBox(primary, divider(), stepping, spacer(), stats);
+        row.getStyleClass().add("control-row");
+        row.setAlignment(Pos.CENTER_LEFT);
+        return row;
+    }
+
+    /** A control with a small caption above it. */
+    private VBox field(String caption, Node control) {
+        Label label = new Label(caption);
+        label.getStyleClass().add("field-caption");
+
+        VBox box = new VBox(label, control);
+        box.getStyleClass().add("field");
+        return box;
+    }
+
+    private VBox speedField() {
+        HBox sliderRow = new HBox(speedSlider, delayLabel);
+        sliderRow.setAlignment(Pos.CENTER_LEFT);
+        sliderRow.getStyleClass().add("slider-row");
+        // Same height as the combo box, so both fields line up on the row.
+        sliderRow.setMinHeight(CONTROL_HEIGHT);
+
+        // Named "Delay", not "Speed": the value is the pause between frames,
+        // so dragging right makes the animation slower, not faster.
+        return field("Delay", sliderRow);
+    }
+
+    /** A counter shown as a caption with its number underneath. */
+    private VBox stat(String caption, Label value) {
+        Label label = new Label(caption);
+        label.getStyleClass().add("stat-caption");
+        value.getStyleClass().add("stat-value");
+
+        VBox box = new VBox(label, value);
+        box.getStyleClass().add("stat");
+        return box;
+    }
+
+    private Separator divider() {
+        Separator separator = new Separator();
+        separator.setOrientation(javafx.geometry.Orientation.VERTICAL);
+        separator.getStyleClass().add("divider");
+        return separator;
+    }
+
+    private Region spacer() {
+        Region region = new Region();
+        HBox.setHgrow(region, Priority.ALWAYS);
+        return region;
+    }
+
+    // ----------------------------------------------------------------- setup
+
+    private void buildAlgorithmSelector() {
+        algorithmSelector.getItems().addAll(ALGORITHMS.keySet());
+        algorithmSelector.setPromptText("Select algorithm");
+        algorithmSelector.setPrefWidth(180);
+        algorithmSelector.setPrefHeight(CONTROL_HEIGHT);
+        algorithmSelector.setCursor(Cursor.HAND);
+    }
+
+    private void buildSpeedSlider() {
+        speedSlider.setPrefWidth(180);
+        speedSlider.setCursor(Cursor.HAND);
+
+        delayLabel.getStyleClass().add("slider-value");
+        delayLabel.textProperty().bind(speedSlider.valueProperty().asString("%.0f ms"));
+    }
+
+    private void wireActions() {
+        startButton.getStyleClass().add("primary");
+        stopButton.getStyleClass().add("danger");
+        newArrayButton.getStyleClass().add("ghost");
+        nextStepButton.getStyleClass().add("ghost");
+
+        newArrayButton.setCursor(Cursor.HAND);
+        startButton.setCursor(Cursor.HAND);
+        stopButton.setCursor(Cursor.HAND);
+        nextStepButton.setCursor(Cursor.HAND);
+        stepModeCheck.setCursor(Cursor.HAND);
 
         nextStepButton.setDisable(true);
 
@@ -85,21 +201,7 @@ public class SortController extends HBox {
         });
 
         nextStepButton.setOnAction(e -> gate.step());
-
         stopButton.setOnAction(e -> gate.requestStop());
-
-        algorithmSelector = new ComboBox<>();
-        algorithmSelector.getItems().addAll(ALGORITHMS.keySet());
-
-        algorithmSelector.setPromptText("Select Algorithm");
-        algorithmSelector.setPrefWidth(150);
-
-        Label speedLabel = new Label("Speed:");
-
-        // Slider configuration: 1 (fast) to 200 (slow)
-        speedSlider = new Slider(1, 200, 30); // default = 30 ms
-        speedSlider.setPrefWidth(200);
-
         newArrayButton.setOnAction(e -> visualizer.regenerateArray());
 
         startButton.setOnAction(e -> {
@@ -108,24 +210,9 @@ public class SortController extends HBox {
                 startSort(algorithm, (int) speedSlider.getValue());
             }
         });
-
-        VBox counterBox = new VBox(5, comparisonsLabel, movesLabel);
-        counterBox.setStyle("-fx-alignment: center-left;");
-
-        newArrayButton.setCursor(Cursor.HAND);
-        startButton.setCursor(Cursor.HAND);
-        algorithmSelector.setCursor(Cursor.HAND);
-        speedSlider.setCursor(Cursor.HAND);
-
-        this.getChildren().addAll(
-                newArrayButton, startButton,
-                algorithmSelector,
-                stepModeCheck, nextStepButton, stopButton,
-                speedLabel, speedSlider,
-                counterBox,
-                aboutButton);
-
     }
+
+    // ------------------------------------------------------------------- run
 
     /**
      * Runs the algorithm on a worker thread, animating it through an
@@ -166,7 +253,7 @@ public class SortController extends HBox {
 
     public void incrementComparisons() {
         comparisons++;
-        Platform.runLater(() -> comparisonsLabel.setText("Comparisons: " + comparisons));
+        Platform.runLater(() -> comparisonsLabel.setText(Integer.toString(comparisons)));
     }
 
     /**
@@ -183,15 +270,15 @@ public class SortController extends HBox {
             return;
         }
         moves += count;
-        Platform.runLater(() -> movesLabel.setText("Moves: " + moves));
+        Platform.runLater(() -> movesLabel.setText(Integer.toString(moves)));
     }
 
     public void resetCounters() {
         comparisons = 0;
         moves = 0;
         Platform.runLater(() -> {
-            comparisonsLabel.setText("Comparisons: 0");
-            movesLabel.setText("Moves: 0");
+            comparisonsLabel.setText("0");
+            movesLabel.setText("0");
         });
     }
 
@@ -207,24 +294,4 @@ public class SortController extends HBox {
         // height unapplied, so redraw the bars from the array.
         visualizer.refreshBars();
     }
-
-    private void showAboutDialog() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("About");
-        alert.setHeaderText("Sorting Visualizer in JavaFX");
-        alert.setContentText(
-                """
-                        This project visualizes classic sorting algorithms step-by-step to help students understand how they work.
-
-                        👤 Author: Cristian Laurentiu Sindila
-                        🛠️ Built: with Java 17, JavaFX 21, and Maven
-                        💻 GitHub: https://github.com/CristianInBits/sorting-visualizer
-                        """);
-
-        DialogPane dialogPane = alert.getDialogPane();
-        dialogPane.setStyle("-fx-font-family: 'Segoe UI'; -fx-font-size: 13px;");
-
-        alert.showAndWait();
-    }
-
 }
