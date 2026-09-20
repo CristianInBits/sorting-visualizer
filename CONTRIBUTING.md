@@ -9,12 +9,15 @@ This project is a JavaFX sorting visualizer built by a Computer Engineering stud
 
 To run the application locally:
 
-1. Make sure you have Java 17+ and Maven installed.
+1. Make sure you have Java 17+ installed and configured as `JAVA_HOME`.
+   Maven is not required — the repo includes the Maven Wrapper.
 2. Run the project with:
 
 ```bash
-mvn clean javafx:run
-````
+./mvnw clean javafx:run
+```
+
+On Windows (CMD or PowerShell) use `mvnw.cmd clean javafx:run`.
 
 ---
 

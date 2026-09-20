@@ -44,13 +44,18 @@ This project helps students and developers understand how different sorting algo
 Make sure you have:
 
 - Java 17+ installed and configured as `JAVA_HOME`
-- Maven installed (v3.6 or higher)
+
+Maven does **not** need to be installed: the project ships with the
+[Maven Wrapper](https://maven.apache.org/wrapper/), which fetches the pinned
+version (3.9.16) on first use.
 
 Then run the app with:
 
 ```bash
-mvn clean javafx:run
-````
+./mvnw clean javafx:run
+```
+
+On Windows (CMD or PowerShell) use `mvnw.cmd clean javafx:run`.
 
 ---
 

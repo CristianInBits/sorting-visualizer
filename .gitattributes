@@ -1,0 +1,15 @@
+# Normalize all text files to LF inside the repository.
+* text=auto eol=lf
+
+# Windows-only scripts need CRLF in the working tree.
+*.cmd text eol=crlf
+*.bat text eol=crlf
+
+# The POSIX Maven Wrapper must stay LF even on Windows checkouts,
+# otherwise it fails with "bad interpreter: /bin/sh^M".
+mvnw text eol=lf
+
+# Binary assets: never touch line endings.
+*.png binary
+*.gif binary
+*.jar binary
