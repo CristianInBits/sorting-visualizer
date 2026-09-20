@@ -12,6 +12,7 @@ import app.algorithms.SortAlgorithm;
 import app.algorithms.SortTrace;
 import app.algorithms.StoppedException;
 import app.player.AnimatedTrace;
+import app.player.StepGate;
 import app.view.SortingVisualizer;
 import javafx.application.Platform;
 import javafx.geometry.Insets;
@@ -51,9 +52,8 @@ public class SortController extends HBox {
     private final Button nextStepButton = new Button("Next Step");
     private final Button stopButton = new Button("Stop");
 
-    private final Object stepLock = new Object();
-    private volatile boolean waitingForStep = false;
-    private volatile boolean stopRequested = false;
+    /** Owns step-by-step mode and the stop request, off the JavaFX thread. */
+    private final StepGate gate = new StepGate();
 
     private int comparisons = 0;
     private int moves = 0;
@@ -78,12 +78,16 @@ public class SortController extends HBox {
         nextStepButton.setDisable(true);
 
         stepModeCheck.setOnAction(e -> {
-            nextStepButton.setDisable(!stepModeCheck.isSelected());
+            boolean enabled = stepModeCheck.isSelected();
+            nextStepButton.setDisable(!enabled);
+            // Tell the gate too: switching the mode off has to release a run
+            // that is already parked waiting for a step.
+            gate.setStepMode(enabled);
         });
 
-        nextStepButton.setOnAction(e -> triggerNextStep());
+        nextStepButton.setOnAction(e -> gate.step());
 
-        stopButton.setOnAction(e -> requestStop());
+        stopButton.setOnAction(e -> gate.requestStop());
 
         algorithmSelector = new ComboBox<>();
         algorithmSelector.getItems().addAll(ALGORITHMS.keySet());
@@ -133,8 +137,10 @@ public class SortController extends HBox {
         setAllControlsDisabled(true);
         resetCounters();
 
+        gate.reset();
+
         int[] values = visualizer.getValues();
-        SortTrace trace = new AnimatedTrace(visualizer, this, delay);
+        SortTrace trace = new AnimatedTrace(visualizer, this, gate, delay);
 
         Thread worker = new Thread(() -> {
             try {
@@ -190,41 +196,9 @@ public class SortController extends HBox {
         });
     }
 
-    public boolean isStepModeEnabled() {
-        return stepModeCheck.isSelected();
-    }
-
-    public void waitForNextStep() throws InterruptedException {
-        if (isStepModeEnabled()) {
-            waitingForStep = true;
-            synchronized (stepLock) {
-                while (waitingForStep && !stopRequested) {
-                    stepLock.wait();
-                }
-            }
-        }
-    }
-
-    public void triggerNextStep() {
-        synchronized (stepLock) {
-            waitingForStep = false;
-            stepLock.notify();
-        }
-    }
-
-    public void requestStop() {
-        stopRequested = true;
-        triggerNextStep(); // For safety
-    }
-
-    public boolean isStopRequested() {
-        return stopRequested;
-    }
-
     public void resetControlsAndState() {
         setAllControlsDisabled(false);
-        stopRequested = false;
-        waitingForStep = false;
+        gate.reset();
 
         // The counters are deliberately left standing: every algorithm calls
         // resetCounters() when it starts, so zeroing them here only wiped the

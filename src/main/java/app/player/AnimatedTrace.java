@@ -20,6 +20,7 @@ import javafx.scene.shape.Rectangle;
 public class AnimatedTrace implements SortTrace {
 
     private final SortController controller;
+    private final StepGate gate;
     private final Rectangle[] bars;
     private final int[] values;
     private final int delay;
@@ -34,8 +35,9 @@ public class AnimatedTrace implements SortTrace {
      */
     private final int[] displayed;
 
-    public AnimatedTrace(SortingVisualizer visualizer, SortController controller, int delay) {
+    public AnimatedTrace(SortingVisualizer visualizer, SortController controller, StepGate gate, int delay) {
         this.controller = controller;
+        this.gate = gate;
         this.bars = visualizer.getBars();
         this.values = visualizer.getValues();
         this.delay = delay;
@@ -113,19 +115,19 @@ public class AnimatedTrace implements SortTrace {
      * so a stop is noticed within one step no matter where the algorithm is.
      */
     private void frame() throws StoppedException {
-        if (controller.isStopRequested()) {
+        if (gate.isStopRequested()) {
             throw new StoppedException();
         }
 
         try {
-            controller.waitForNextStep();
+            gate.await();
             Thread.sleep(delay);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new StoppedException();
         }
 
-        if (controller.isStopRequested()) {
+        if (gate.isStopRequested()) {
             throw new StoppedException();
         }
     }
