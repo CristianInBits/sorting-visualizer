@@ -15,6 +15,8 @@ public class SortingVisualizer extends HBox {
     private static final int MAX_HEIGHT = 300;
     private static final int BAR_WIDTH = 12;
 
+    private static final Color DEFAULT_BAR_COLOR = Color.CORNFLOWERBLUE;
+
     private int[] values;
     private Rectangle[] bars;
 
@@ -41,7 +43,7 @@ public class SortingVisualizer extends HBox {
             Rectangle bar = new Rectangle();
             bar.setWidth(BAR_WIDTH);
             bar.setHeight(values[i]);
-            bar.setFill(Color.CORNFLOWERBLUE);
+            bar.setFill(DEFAULT_BAR_COLOR);
             bars[i] = bar;
             this.getChildren().add(bar);
         }
@@ -50,6 +52,20 @@ public class SortingVisualizer extends HBox {
     public void regenerateArray() {
         generateRandomArray();
         createBars();
+    }
+
+    /**
+     * Restores every bar to its idle color.
+     *
+     * A run that is stopped early returns straight out of its loops, skipping
+     * the pending resetColor calls, so highlighted bars would otherwise stay
+     * red (or orange, for the Quick Sort pivot) until the array is regenerated.
+     * Must be called on the JavaFX application thread.
+     */
+    public void resetBarColors() {
+        for (Rectangle bar : bars) {
+            bar.setFill(DEFAULT_BAR_COLOR);
+        }
     }
 
     public int[] getValues() {
