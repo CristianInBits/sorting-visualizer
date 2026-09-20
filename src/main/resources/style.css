@@ -53,3 +53,16 @@
     -fx-padding: 10 0 0 10;
     /* top right bottom left */
 }
+
+/* Bars. Kept in the stylesheet so they follow the theme like everything else. */
+.sort-bar {
+    -fx-fill: #6495ed;
+}
+
+.sort-bar.comparing {
+    -fx-fill: #e53935;
+}
+
+.sort-bar.marked {
+    -fx-fill: #fb8c00;
+}
