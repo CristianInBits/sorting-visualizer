@@ -45,7 +45,15 @@ cd sorting-visualizer
 ./mvnw javafx:run
 ```
 
-On Windows, use `mvnw.cmd javafx:run` instead.
+On Windows, use `.\mvnw.cmd javafx:run` instead. The `.\` matters:
+PowerShell never looks in the working directory for a command.
+
+Or skip the terminal altogether with the launchers in the repository root:
+**`run.bat`** on Windows, **`run.sh`** elsewhere. They check that a JDK is
+present, say so plainly if it is not, and otherwise hand straight over to the
+wrapper. Double-clicking works on Windows; on Linux and macOS most file
+managers open a `.sh` in an editor instead of running it, so there you are
+better off with `./run.sh` from a terminal.
 
 The first run fetches Maven and about **30 MB** of dependencies, so give it a
 minute. After that it starts in a few seconds. To run the tests instead of the
