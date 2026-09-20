@@ -179,6 +179,9 @@ public class SortController extends HBox {
         stopRequested = false;
         waitingForStep = false;
         resetCounters();
+        // A stopped run returns before its pending resetColor calls, so the
+        // bars it had highlighted must be cleared here.
+        visualizer.resetBarColors();
     }
 
     private void showAboutDialog() {

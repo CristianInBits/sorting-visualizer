@@ -66,16 +66,17 @@ public class MergeSort implements SortAlgorithm {
             controller.waitForNextStep();
             Thread.sleep(delay);
 
+            // Clear the two bars highlighted above before the indices move.
+            // Only one of them advances, so resetting i-1 / j-1 left the
+            // other pointer red for good and cleared an unrelated bar instead.
+            resetColor(i);
+            resetColor(j);
+
             if (values[i] <= values[j]) {
                 temp[k++] = values[i++];
             } else {
                 temp[k++] = values[j++];
             }
-
-            if (i - 1 >= 0 && i - 1 < bars.length)
-                resetColor(i - 1);
-            if (j - 1 >= 0 && j - 1 < bars.length)
-                resetColor(j - 1);
         }
 
         while (i <= mid) {
@@ -85,9 +86,8 @@ public class MergeSort implements SortAlgorithm {
             highlight(i, Color.RED);
             controller.waitForNextStep();
             Thread.sleep(delay);
+            resetColor(i);
             temp[k++] = values[i++];
-            if (i - 1 >= 0 && i - 1 < bars.length)
-                resetColor(i - 1);
         }
 
         while (j <= right) {
@@ -97,9 +97,8 @@ public class MergeSort implements SortAlgorithm {
             highlight(j, Color.RED);
             controller.waitForNextStep();
             Thread.sleep(delay);
+            resetColor(j);
             temp[k++] = values[j++];
-            if (j - 1 >= 0 && j - 1 < bars.length)
-                resetColor(j - 1);
         }
 
         for (int m = 0; m < temp.length; m++) {
