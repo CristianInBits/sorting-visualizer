@@ -15,7 +15,14 @@ public class SortingVisualizer extends HBox {
     private static final int MAX_HEIGHT = 300;
     private static final int BAR_WIDTH = 12;
 
-    private static final Color DEFAULT_BAR_COLOR = Color.CORNFLOWERBLUE;
+    /** Idle bar. */
+    public static final Color DEFAULT_BAR_COLOR = Color.CORNFLOWERBLUE;
+
+    /** A bar taking part in the comparison being shown. */
+    public static final Color COMPARE_COLOR = Color.RED;
+
+    /** A bar the algorithm is holding onto: a pivot, or the current minimum. */
+    public static final Color MARK_COLOR = Color.ORANGE;
 
     private int[] values;
     private Rectangle[] bars;
@@ -55,16 +62,18 @@ public class SortingVisualizer extends HBox {
     }
 
     /**
-     * Restores every bar to its idle color.
+     * Puts every bar back in step with its value: idle colour, and the height
+     * the array says it should have.
      *
-     * A run that is stopped early returns straight out of its loops, skipping
-     * the pending resetColor calls, so highlighted bars would otherwise stay
-     * red (or orange, for the Quick Sort pivot) until the array is regenerated.
+     * A stopped run abandons its loops wherever it happens to be, leaving bars
+     * highlighted and, when Merge Sort is interrupted during a copy-back, a
+     * few heights not yet applied. Redrawing from the array settles both.
      * Must be called on the JavaFX application thread.
      */
-    public void resetBarColors() {
-        for (Rectangle bar : bars) {
-            bar.setFill(DEFAULT_BAR_COLOR);
+    public void refreshBars() {
+        for (int i = 0; i < bars.length; i++) {
+            bars[i].setHeight(values[i]);
+            bars[i].setFill(DEFAULT_BAR_COLOR);
         }
     }
 
