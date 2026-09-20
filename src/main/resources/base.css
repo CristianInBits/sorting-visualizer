@@ -99,7 +99,7 @@
 .slider-value {
     -fx-font-size: 12px;
     -fx-text-fill: -sv-text-muted;
-    -fx-min-width: 48;
+    -fx-min-width: 62;
 }
 
 .button-group {

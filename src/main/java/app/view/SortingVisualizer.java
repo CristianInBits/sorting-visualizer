@@ -19,12 +19,22 @@ import javafx.scene.shape.Rectangle;
  */
 public class SortingVisualizer extends HBox {
 
-    private static final int NUM_BARS = 50;
+    /** How many bars the array starts with. */
+    public static final int DEFAULT_BAR_COUNT = 50;
+
+    /** Range the picker offers. Past ~150 the bars are thinner than the gaps. */
+    public static final int MIN_BAR_COUNT = 10;
+    public static final int MAX_BAR_COUNT = 150;
+
     private static final int MIN_VALUE = 10;
     private static final int MAX_VALUE = 300;
 
-    /** Gap between bars, in pixels. */
-    private static final double GAP = 3;
+    /**
+     * Widest gap between bars. It shrinks with the bars themselves, because a
+     * fixed 3px gap swallows more than 40% of the width once there are 150 of
+     * them.
+     */
+    private static final double MAX_GAP = 3;
 
     /** Never let a bar vanish completely, however small the window. */
     private static final double MIN_BAR_PIXELS = 2;
@@ -41,12 +51,12 @@ public class SortingVisualizer extends HBox {
     /** Added while the algorithm holds a bar: a pivot, or the current minimum. */
     public static final String MARKED_CLASS = "marked";
 
+    private int barCount = DEFAULT_BAR_COUNT;
     private int[] values;
     private Rectangle[] bars;
 
     public SortingVisualizer() {
         getStyleClass().add("visualizer");
-        setSpacing(GAP);
         setAlignment(Pos.BOTTOM_CENTER);
 
         // Let the parent shrink us; without this the fixed bar widths would
@@ -61,18 +71,18 @@ public class SortingVisualizer extends HBox {
     }
 
     private void generateRandomArray() {
-        values = new int[NUM_BARS];
+        values = new int[barCount];
         Random rand = new Random();
-        for (int i = 0; i < NUM_BARS; i++) {
+        for (int i = 0; i < barCount; i++) {
             values[i] = MIN_VALUE + rand.nextInt(MAX_VALUE - MIN_VALUE + 1);
         }
     }
 
     private void createBars() {
-        bars = new Rectangle[NUM_BARS];
+        bars = new Rectangle[barCount];
         getChildren().clear();
 
-        for (int i = 0; i < NUM_BARS; i++) {
+        for (int i = 0; i < barCount; i++) {
             Rectangle bar = new Rectangle();
             bar.getStyleClass().add(BAR_CLASS);
             bars[i] = bar;
@@ -83,16 +93,15 @@ public class SortingVisualizer extends HBox {
 
     /** Recomputes every bar from the current size of the row. */
     private void resizeBars() {
-        double barWidth = barWidth();
+        double slot = getWidth() / barCount;
+        double gap = Math.min(MAX_GAP, slot / 4);
+        double barWidth = Math.max(MIN_BAR_PIXELS, slot - gap);
+
+        setSpacing(gap);
         for (int i = 0; i < bars.length; i++) {
             bars[i].setWidth(barWidth);
             bars[i].setHeight(pixelsFor(values[i]));
         }
-    }
-
-    private double barWidth() {
-        double usable = getWidth() - GAP * (NUM_BARS - 1);
-        return Math.max(MIN_BAR_PIXELS, usable / NUM_BARS);
     }
 
     /** Converts a logical value into the height it should occupy right now. */
@@ -112,6 +121,26 @@ public class SortingVisualizer extends HBox {
         for (Rectangle bar : bars) {
             bar.getStyleClass().removeAll(COMPARING_CLASS, MARKED_CLASS);
         }
+    }
+
+    public int getBarCount() {
+        return barCount;
+    }
+
+    /**
+     * Rebuilds the array at a new size. Clamped to the offered range, and a
+     * no-op when the size has not actually changed, so dragging the picker
+     * across a value it already holds does not reshuffle the bars.
+     */
+    public void setBarCount(int count) {
+        int wanted = Math.max(MIN_BAR_COUNT, Math.min(MAX_BAR_COUNT, count));
+        if (wanted == barCount) {
+            return;
+        }
+
+        barCount = wanted;
+        generateRandomArray();
+        createBars();
     }
 
     /** Draws the given value at that position. */

@@ -71,6 +71,8 @@ app, use `./mvnw test`.
   paused.
 - **Watch the cost add up.** Comparisons and moves are counted live, and they
   stay on screen when the run ends so you can actually read them.
+- **Choose how much there is to sort.** Anywhere from 10 to 150 bars. They
+  are redrawn to fit, and the gap between them shrinks along with them.
 - **Set the pace.** A delay of 1 to 200 ms per frame, with a live readout.
 - **Stop whenever.** The array is always left consistent, never half-copied.
 - **Switch themes.** Light and dark, bars included.

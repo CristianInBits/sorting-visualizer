@@ -68,6 +68,10 @@ public class SortController extends VBox {
     private final CheckBox stepModeCheck = new CheckBox("Step by step");
     private final ComboBox<String> algorithmSelector = new ComboBox<>();
     private final Slider speedSlider = new Slider(1, 200, 30);
+    private final Slider sizeSlider = new Slider(
+            SortingVisualizer.MIN_BAR_COUNT,
+            SortingVisualizer.MAX_BAR_COUNT,
+            SortingVisualizer.DEFAULT_BAR_COUNT);
 
     private final SortingVisualizer visualizer;
 
@@ -80,6 +84,7 @@ public class SortController extends VBox {
     private final Label comparisonsLabel = new Label("0");
     private final Label movesLabel = new Label("0");
     private final Label delayLabel = new Label();
+    private final Label sizeLabel = new Label();
 
     public SortController(SortingVisualizer visualizer) {
         this.visualizer = visualizer;
@@ -88,6 +93,7 @@ public class SortController extends VBox {
 
         buildAlgorithmSelector();
         buildSpeedSlider();
+        buildSizeSlider();
         wireActions();
 
         getChildren().addAll(setupRow(), runRow());
@@ -97,7 +103,7 @@ public class SortController extends VBox {
 
     /** Top row: what to run. */
     private HBox setupRow() {
-        HBox row = new HBox(field("Algorithm", algorithmSelector), speedField());
+        HBox row = new HBox(field("Algorithm", algorithmSelector), sizeField(), speedField());
         row.getStyleClass().add("control-row");
         row.setAlignment(Pos.BOTTOM_LEFT);
         return row;
@@ -132,16 +138,24 @@ public class SortController extends VBox {
         return box;
     }
 
-    private VBox speedField() {
-        HBox sliderRow = new HBox(speedSlider, delayLabel);
-        sliderRow.setAlignment(Pos.CENTER_LEFT);
-        sliderRow.getStyleClass().add("slider-row");
-        // Same height as the combo box, so both fields line up on the row.
-        sliderRow.setMinHeight(CONTROL_HEIGHT);
+    private VBox sizeField() {
+        return field("Array size", sliderRow(sizeSlider, sizeLabel));
+    }
 
+    private VBox speedField() {
         // Named "Delay", not "Speed": the value is the pause between frames,
         // so dragging right makes the animation slower, not faster.
-        return field("Delay", sliderRow);
+        return field("Delay", sliderRow(speedSlider, delayLabel));
+    }
+
+    /** A slider with its live readout beside it. */
+    private HBox sliderRow(Slider slider, Label readout) {
+        HBox row = new HBox(slider, readout);
+        row.setAlignment(Pos.CENTER_LEFT);
+        row.getStyleClass().add("slider-row");
+        // Same height as the combo box, so every field lines up on the row.
+        row.setMinHeight(CONTROL_HEIGHT);
+        return row;
     }
 
     /** A counter shown as a caption with its number underneath. */
@@ -179,11 +193,34 @@ public class SortController extends VBox {
     }
 
     private void buildSpeedSlider() {
-        speedSlider.setPrefWidth(180);
+        speedSlider.setPrefWidth(150);
         speedSlider.setCursor(Cursor.HAND);
 
         delayLabel.getStyleClass().add("slider-value");
         delayLabel.textProperty().bind(speedSlider.valueProperty().asString("%.0f ms"));
+    }
+
+    private void buildSizeSlider() {
+        sizeSlider.setPrefWidth(150);
+        sizeSlider.setBlockIncrement(5);
+        sizeSlider.setCursor(Cursor.HAND);
+
+        sizeLabel.getStyleClass().add("slider-value");
+        sizeLabel.textProperty().bind(sizeSlider.valueProperty().asString("%.0f bars"));
+
+        // Rebuild once the value settles, not on every tick of a drag: the
+        // array is regenerated each time, so reacting continuously would
+        // reshuffle the bars sixty times a second.
+        sizeSlider.valueProperty().addListener((property, was, now) -> {
+            if (!sizeSlider.isValueChanging()) {
+                visualizer.setBarCount(now.intValue());
+            }
+        });
+        sizeSlider.valueChangingProperty().addListener((property, was, changing) -> {
+            if (!changing) {
+                visualizer.setBarCount((int) sizeSlider.getValue());
+            }
+        });
     }
 
     private void wireActions() {
@@ -256,6 +293,7 @@ public class SortController extends VBox {
         newArrayButton.setDisable(disabled);
         startButton.setDisable(disabled);
         speedSlider.setDisable(disabled);
+        sizeSlider.setDisable(disabled);
         algorithmSelector.setDisable(disabled);
     }
 
