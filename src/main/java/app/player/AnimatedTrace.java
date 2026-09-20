@@ -6,7 +6,7 @@ import app.controller.SortController;
 import app.view.SortingVisualizer;
 
 import javafx.application.Platform;
-import javafx.scene.paint.Color;
+import javafx.collections.ObservableList;
 import javafx.scene.shape.Rectangle;
 
 /**
@@ -47,8 +47,8 @@ public class AnimatedTrace implements SortTrace {
 
     @Override
     public void compared(int i, int j) throws StoppedException {
-        paint(i, SortingVisualizer.COMPARE_COLOR);
-        paint(j, SortingVisualizer.COMPARE_COLOR);
+        state(i, SortingVisualizer.COMPARING_CLASS);
+        state(j, SortingVisualizer.COMPARING_CLASS);
         controller.incrementComparisons();
 
         frame();
@@ -100,13 +100,13 @@ public class AnimatedTrace implements SortTrace {
     @Override
     public void mark(int index) {
         marked[index] = true;
-        paint(index, SortingVisualizer.MARK_COLOR);
+        state(index, SortingVisualizer.MARKED_CLASS);
     }
 
     @Override
     public void unmark(int index) {
         marked[index] = false;
-        paint(index, SortingVisualizer.DEFAULT_BAR_COLOR);
+        state(index, null);
     }
 
     /**
@@ -132,14 +132,22 @@ public class AnimatedTrace implements SortTrace {
         }
     }
 
-    /** Returns a bar to its resting colour, keeping any mark it still carries. */
+    /** Returns a bar to its resting look, keeping any mark it still carries. */
     private void restore(int index) {
-        paint(index, marked[index]
-                ? SortingVisualizer.MARK_COLOR
-                : SortingVisualizer.DEFAULT_BAR_COLOR);
+        state(index, marked[index] ? SortingVisualizer.MARKED_CLASS : null);
     }
 
-    private void paint(int index, Color color) {
-        Platform.runLater(() -> bars[index].setFill(color));
+    /**
+     * Puts a bar in exactly one visual state; null means idle. The removeAll
+     * also keeps the list from accumulating duplicates over a long run.
+     */
+    private void state(int index, String styleClass) {
+        Platform.runLater(() -> {
+            ObservableList<String> classes = bars[index].getStyleClass();
+            classes.removeAll(SortingVisualizer.COMPARING_CLASS, SortingVisualizer.MARKED_CLASS);
+            if (styleClass != null) {
+                classes.add(styleClass);
+            }
+        });
     }
 }

@@ -61,3 +61,16 @@
     -fx-padding: 10 0 0 10;
     /* top right bottom left */
 }
+
+/* Bars. Lifted and softened so they read against the dark background. */
+.sort-bar {
+    -fx-fill: #5b8dd9;
+}
+
+.sort-bar.comparing {
+    -fx-fill: #ff6b6b;
+}
+
+.sort-bar.marked {
+    -fx-fill: #ffb74d;
+}

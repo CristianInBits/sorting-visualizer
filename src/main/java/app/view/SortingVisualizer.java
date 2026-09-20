@@ -6,7 +6,6 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.Button;
 import javafx.scene.control.DialogPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
 
 public class SortingVisualizer extends HBox {
@@ -15,14 +14,17 @@ public class SortingVisualizer extends HBox {
     private static final int MAX_HEIGHT = 300;
     private static final int BAR_WIDTH = 12;
 
-    /** Idle bar. */
-    public static final Color DEFAULT_BAR_COLOR = Color.CORNFLOWERBLUE;
+    // Bar colours live in style.css and dark.css so they follow the theme.
+    // The code only moves style classes around; it never sets a fill.
 
-    /** A bar taking part in the comparison being shown. */
-    public static final Color COMPARE_COLOR = Color.RED;
+    /** Every bar carries this. */
+    public static final String BAR_CLASS = "sort-bar";
 
-    /** A bar the algorithm is holding onto: a pivot, or the current minimum. */
-    public static final Color MARK_COLOR = Color.ORANGE;
+    /** Added while a bar takes part in the comparison being shown. */
+    public static final String COMPARING_CLASS = "comparing";
+
+    /** Added while the algorithm holds a bar: a pivot, or the current minimum. */
+    public static final String MARKED_CLASS = "marked";
 
     private int[] values;
     private Rectangle[] bars;
@@ -50,7 +52,7 @@ public class SortingVisualizer extends HBox {
             Rectangle bar = new Rectangle();
             bar.setWidth(BAR_WIDTH);
             bar.setHeight(values[i]);
-            bar.setFill(DEFAULT_BAR_COLOR);
+            bar.getStyleClass().add(BAR_CLASS);
             bars[i] = bar;
             this.getChildren().add(bar);
         }
@@ -73,7 +75,7 @@ public class SortingVisualizer extends HBox {
     public void refreshBars() {
         for (int i = 0; i < bars.length; i++) {
             bars[i].setHeight(values[i]);
-            bars[i].setFill(DEFAULT_BAR_COLOR);
+            bars[i].getStyleClass().removeAll(COMPARING_CLASS, MARKED_CLASS);
         }
     }
 
