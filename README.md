@@ -1,5 +1,7 @@
 # Sorting Visualizer in JavaFX
 
+[![build](https://github.com/CristianInBits/sorting-visualizer/actions/workflows/build.yml/badge.svg)](https://github.com/CristianInBits/sorting-visualizer/actions/workflows/build.yml)
+
 A dynamic sorting algorithm visualizer built with JavaFX.  
 This project helps students and developers understand how different sorting algorithms work by displaying step-by-step animations of the sorting process.
 

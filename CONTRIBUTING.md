@@ -34,8 +34,17 @@ On Windows (CMD or PowerShell) use `mvnw.cmd clean javafx:run`.
 * Fork the repo and create your feature branch from `dev`.
 * Follow this branch naming convention: `feature/your-feature-name` or `fix/your-fix-name`
 * Use descriptive commit messages.
-* Ensure your changes do not break the application.
-* Test before submitting the PR.
+* Run the build before opening the PR:
+
+```bash
+./mvnw verify
+```
+
+  It compiles, runs the test suite and packages the jar -- the same command
+  CI runs on Linux and Windows.
+* Add or update tests when the change is testable. The algorithms are plain
+  Java and need no JavaFX, so they are cheap to cover.
+* Check the app still runs: `./mvnw javafx:run`.
 
 ### 📂 Code Style
 
