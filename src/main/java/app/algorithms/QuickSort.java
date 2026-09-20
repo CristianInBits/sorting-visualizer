@@ -67,8 +67,7 @@ public class QuickSort implements SortAlgorithm {
 
             if (values[j] < pivot) {
                 i++;
-                swap(i, j);
-                controller.incrementSwaps();
+                controller.addMoves(swap(i, j));
                 controller.waitForNextStep();
                 Thread.sleep(delay);
             }
@@ -76,8 +75,7 @@ public class QuickSort implements SortAlgorithm {
             resetColor(j);
         }
 
-        swap(i + 1, high);
-        controller.incrementSwaps();
+        controller.addMoves(swap(i + 1, high));
         controller.waitForNextStep();
         Thread.sleep(delay);
 
@@ -87,7 +85,12 @@ public class QuickSort implements SortAlgorithm {
         return i + 1;
     }
 
-    private void swap(int i, int j) {
+    /** Swaps two bars and returns how many of them changed height. */
+    private int swap(int i, int j) {
+        if (values[i] == values[j]) {
+            return 0;
+        }
+
         int temp = values[i];
         values[i] = values[j];
         values[j] = temp;
@@ -97,6 +100,8 @@ public class QuickSort implements SortAlgorithm {
             bars[i].setHeight(bars[j].getHeight());
             bars[j].setHeight(h);
         });
+
+        return 2;
     }
 
     private void highlight(int i, Color color) {

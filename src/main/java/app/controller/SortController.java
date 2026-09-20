@@ -36,10 +36,10 @@ public class SortController extends HBox {
     private volatile boolean stopRequested = false;
 
     private int comparisons = 0;
-    private int swaps = 0;
+    private int moves = 0;
 
     private final Label comparisonsLabel = new Label("Comparisons: 0");
-    private final Label swapsLabel = new Label("Swaps: 0");
+    private final Label movesLabel = new Label("Moves: 0");
 
     public SortController(SortingVisualizer visualizer) {
         this.visualizer = visualizer;
@@ -99,7 +99,7 @@ public class SortController extends HBox {
             }
         });
 
-        VBox counterBox = new VBox(5, comparisonsLabel, swapsLabel);
+        VBox counterBox = new VBox(5, comparisonsLabel, movesLabel);
         counterBox.setStyle("-fx-alignment: center-left;");
 
         newArrayButton.setCursor(Cursor.HAND);
@@ -129,17 +129,29 @@ public class SortController extends HBox {
         Platform.runLater(() -> comparisonsLabel.setText("Comparisons: " + comparisons));
     }
 
-    public void incrementSwaps() {
-        swaps++;
-        Platform.runLater(() -> swapsLabel.setText("Swaps: " + swaps));
+    /**
+     * Records array writes that actually changed a value, i.e. bars that
+     * changed height. A swap of two distinct values is 2 moves, one merge
+     * copy is 1 move.
+     *
+     * Counting moves rather than swaps keeps the four algorithms on the same
+     * axis: Merge Sort performs no swaps at all, it copies through a buffer,
+     * so a "swap" count made it look like it moved more data than Quick Sort.
+     */
+    public void addMoves(int count) {
+        if (count <= 0) {
+            return;
+        }
+        moves += count;
+        Platform.runLater(() -> movesLabel.setText("Moves: " + moves));
     }
 
     public void resetCounters() {
         comparisons = 0;
-        swaps = 0;
+        moves = 0;
         Platform.runLater(() -> {
             comparisonsLabel.setText("Comparisons: 0");
-            swapsLabel.setText("Swaps: 0");
+            movesLabel.setText("Moves: 0");
         });
     }
 
@@ -178,7 +190,11 @@ public class SortController extends HBox {
         setAllControlsDisabled(false);
         stopRequested = false;
         waitingForStep = false;
-        resetCounters();
+
+        // The counters are deliberately left standing: every algorithm calls
+        // resetCounters() when it starts, so zeroing them here only wiped the
+        // result before it could be read.
+
         // A stopped run returns before its pending resetColor calls, so the
         // bars it had highlighted must be cleared here.
         visualizer.resetBarColors();
