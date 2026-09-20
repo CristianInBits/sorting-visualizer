@@ -36,8 +36,8 @@ public class SortingVisualizer extends HBox {
      */
     private static final double MAX_GAP = 3;
 
-    /** Never let a bar vanish completely, however small the window. */
-    private static final double MIN_BAR_PIXELS = 2;
+    /** Never let a bar with a real value render as nothing at all. */
+    private static final double MIN_BAR_HEIGHT = 2;
 
     // Bar colours live in style.css and dark.css so they follow the theme.
     // The code only moves style classes around; it never sets a fill.
@@ -99,9 +99,14 @@ public class SortingVisualizer extends HBox {
 
     /** Recomputes every bar from the current size of the row. */
     private void resizeBars() {
+        // Each bar owns a slot and gives part of it to the gap on its right,
+        // so the row always measures width - gap however tight it gets. There
+        // is deliberately no floor on the width: clamping it to a minimum was
+        // what pushed the bars back out of the panel once the slot fell below
+        // that minimum.
         double slot = getWidth() / barCount;
         double gap = Math.min(MAX_GAP, slot / 4);
-        double barWidth = Math.max(MIN_BAR_PIXELS, slot - gap);
+        double barWidth = Math.max(0, slot - gap);
 
         setSpacing(gap);
         for (int i = 0; i < bars.length; i++) {
@@ -118,7 +123,7 @@ public class SortingVisualizer extends HBox {
             // the very first frame is not drawn flat.
             return value;
         }
-        return Math.max(MIN_BAR_PIXELS, usable * value / (double) MAX_VALUE);
+        return Math.max(MIN_BAR_HEIGHT, usable * value / (double) MAX_VALUE);
     }
 
     public void regenerateArray() {

@@ -224,6 +224,19 @@ public class SortController extends VBox {
     }
 
     private void wireActions() {
+        // Ids so the controls can be found from outside, by CSS and by tests,
+        // without depending on their position in the layout.
+        startButton.setId("startButton");
+        stopButton.setId("stopButton");
+        newArrayButton.setId("newArrayButton");
+        nextStepButton.setId("nextStepButton");
+        stepModeCheck.setId("stepModeCheck");
+        algorithmSelector.setId("algorithmSelector");
+        speedSlider.setId("delaySlider");
+        sizeSlider.setId("sizeSlider");
+        comparisonsLabel.setId("comparisonsValue");
+        movesLabel.setId("movesValue");
+
         startButton.getStyleClass().add("primary");
         stopButton.getStyleClass().add("danger");
         newArrayButton.getStyleClass().add("ghost");

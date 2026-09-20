@@ -12,6 +12,7 @@
         <java.version>17</java.version>
         <javafx.version>21.0.1</javafx.version>
         <junit.version>5.10.2</junit.version>
+        <monocle.version>21.0.2</monocle.version>
     </properties>
 
     <dependencies>
@@ -21,11 +22,20 @@
             <artifactId>javafx-controls</artifactId>
             <version>${javafx.version}</version>
         </dependency>
-        <!-- Tests. The algorithms are plain Java, so they need no JavaFX here. -->
+        <!-- Tests. The algorithms are plain Java and need no JavaFX. -->
         <dependency>
             <groupId>org.junit.jupiter</groupId>
             <artifactId>junit-jupiter</artifactId>
             <version>${junit.version}</version>
+            <scope>test</scope>
+        </dependency>
+
+        <!-- Headless JavaFX, so the controls and the bars can be exercised
+             on a CI runner with no display. -->
+        <dependency>
+            <groupId>org.testfx</groupId>
+            <artifactId>openjfx-monocle</artifactId>
+            <version>${monocle.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
@@ -46,6 +56,14 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-surefire-plugin</artifactId>
                 <version>3.2.5</version>
+                <configuration>
+                    <systemPropertyVariables>
+                        <java.awt.headless>true</java.awt.headless>
+                        <glass.platform>Monocle</glass.platform>
+                        <monocle.platform>Headless</monocle.platform>
+                        <prism.order>sw</prism.order>
+                    </systemPropertyVariables>
+                </configuration>
             </plugin>
 
             <!-- Maven exec plugin -->

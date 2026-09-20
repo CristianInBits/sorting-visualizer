@@ -211,7 +211,7 @@ exception unwind.
 ./mvnw test
 ```
 
-30 tests, no JavaFX toolkit, about a second:
+43 tests, about two seconds, no display needed:
 
 - Each algorithm against 200 random arrays, plus the edge cases — empty, one
   element, all equal, already sorted, reversed, duplicates, extreme values.
@@ -219,6 +219,15 @@ exception unwind.
   never left with values lost or invented.
 - The step-by-step gate, driven by real threads: a Next Step that arrives early
   is not dropped, and unticking the box releases a run that is parked.
+- The bars and the control panel, as the real JavaFX nodes. The algorithms
+  need no toolkit; these do, and they get a headless one from Monocle, so
+  they run on a CI machine with no screen like everything else.
+
+The interface tests measure **where the bars actually land after a layout
+pass**, not what the sizing formula intended. That distinction matters: the
+one time the bars spilled out of the panel, the formula was correct and the
+layout was not. One of them also presses Start, waits for the worker to
+finish, and checks the array came back sorted.
 
 ---
 
@@ -241,8 +250,11 @@ src/main/resources/
 └── dark.css      Palette only
 
 src/test/java/app/
-├── algorithms/   Headless algorithm tests
-└── player/       Concurrency tests for the step gate
+├── algorithms/   Algorithm tests, no toolkit at all
+├── player/       Concurrency tests for the step gate
+├── controller/   The control panel, on a headless toolkit
+├── view/         The bars: sizing, state, and where they land
+└── Fx.java       Starts the headless toolkit, runs work on its thread
 ```
 
 <div align="center">
