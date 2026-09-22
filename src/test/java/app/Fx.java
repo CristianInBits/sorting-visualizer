@@ -26,12 +26,22 @@ public final class Fx {
         requireMonocle();
 
         CountDownLatch up = new CountDownLatch(1);
+        boolean startedHere;
         try {
             Platform.startup(up::countDown);
+            startedHere = true;
         } catch (IllegalStateException alreadyRunning) {
-            return;
+            startedHere = false;
         }
-        await(up, "the JavaFX toolkit never started");
+        if (startedHere) {
+            await(up, "the JavaFX toolkit never started");
+        }
+
+        // By default JavaFX shuts itself down once its last window closes. A
+        // test that opens a window and closes it afterwards would then take
+        // the JavaFX thread with it, and every test that followed, in any
+        // class, would wait on a thread that no longer exists.
+        Platform.setImplicitExit(false);
     }
 
     /**

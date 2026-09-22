@@ -211,7 +211,7 @@ exception unwind.
 ./mvnw test
 ```
 
-43 tests, about two seconds, no display needed:
+50 tests, about three seconds, no display needed:
 
 - Each algorithm against 200 random arrays, plus the edge cases — empty, one
   element, all equal, already sorted, reversed, duplicates, extreme values.
@@ -222,6 +222,13 @@ exception unwind.
 - The bars and the control panel, as the real JavaFX nodes. The algorithms
   need no toolkit; these do, and they get a headless one from Monocle, so
   they run on a CI machine with no screen like everything else.
+- The application window itself: its layout, and the theme toggle swapping
+  palettes both ways without piling up stylesheets. One test reads the
+  background JavaFX actually resolved, because loading the right file does
+  not by itself prove the colours reached the screen.
+- The stylesheets against each other: every colour `base.css` looks up has
+  to be defined by both palettes, since a missing one raises no error and
+  just leaves part of the window uncoloured.
 
 The interface tests measure **where the bars actually land after a layout
 pass**, not what the sizing formula intended. That distinction matters: the
@@ -254,7 +261,9 @@ src/test/java/app/
 ├── player/       Concurrency tests for the step gate
 ├── controller/   The control panel, on a headless toolkit
 ├── view/         The bars: sizing, state, and where they land
-└── Fx.java       Starts the headless toolkit, runs work on its thread
+├── MainTest.java          The window and the theme toggle
+├── ThemePaletteTest.java  Both palettes cover what base.css uses
+└── Fx.java                Starts the headless toolkit, runs work on its thread
 ```
 
 <div align="center">

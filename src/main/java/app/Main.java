@@ -28,6 +28,7 @@ public class Main extends Application {
         SortController controller = new SortController(visualizer);
 
         ToggleButton themeToggle = new ToggleButton("Dark mode");
+        themeToggle.setId("themeToggle");
         themeToggle.getStyleClass().add("theme-toggle");
         themeToggle.setCursor(Cursor.HAND);
 
@@ -64,6 +65,7 @@ public class Main extends Application {
         HBox.setHgrow(spacer, Priority.ALWAYS);
 
         Button aboutButton = new Button("About");
+        aboutButton.setId("aboutButton");
         aboutButton.getStyleClass().add("ghost");
         aboutButton.setCursor(Cursor.HAND);
         aboutButton.setOnAction(e -> showAboutDialog());
