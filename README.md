@@ -13,7 +13,7 @@ theme.
 [![JavaFX](https://img.shields.io/badge/JavaFX-21-1f8ac0)](https://openjfx.io/)
 [![License](https://img.shields.io/badge/License-MIT-green)](LICENSE)
 
-<img src="assets/preview/hero.png" width="860" alt="Quick Sort running: one bar red as it is compared, the pivot orange on the right, counters showing 30 comparisons and 34 moves">
+<img src="assets/preview/hero.png" width="860" alt="The app part way through a Quick Sort: the bar being compared is red, the pivot is orange, the bars on the left are already partly in order, and the setup controls are greyed out while the comparison and move counters run">
 
 </div>
 
@@ -258,7 +258,7 @@ src/test/java/app/
 ```
 
 <div align="center">
-<img src="assets/preview/algorithms.png" width="178" alt="The algorithm picker, open, showing Bubble, Quick, Selection and Merge Sort">
+<img src="assets/preview/algorithms.png" width="178" alt="The algorithm picker open, listing Bubble, Insertion, Selection, Merge, Quick and Heap Sort">
 </div>
 
 ---
