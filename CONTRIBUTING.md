@@ -17,7 +17,8 @@ To run the application locally:
 ./mvnw clean javafx:run
 ```
 
-On Windows (CMD or PowerShell) use `mvnw.cmd clean javafx:run`.
+On Windows, use `.\mvnw.cmd clean javafx:run` instead. The `.\` matters:
+PowerShell never looks in the working directory for a command.
 
 ---
 
