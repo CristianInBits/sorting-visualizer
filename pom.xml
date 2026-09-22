@@ -88,4 +88,50 @@
 
         </plugins>
     </build>
+
+    <profiles>
+        <!--
+            From JDK 24 the JVM warns at startup that JavaFX 21 loads native
+            libraries and allocates memory through sun.misc.Unsafe. Both are
+            simply how this JavaFX version works, so the warnings are noise and
+            are switched off here.
+
+            Only on 24 and later, though, and that is the point of the profile.
+            On older JDKs the warnings never appear, and the Unsafe flag does
+            not exist before 23: Java 17 refuses to start at all when handed
+            it, and 17 is the minimum this project supports.
+        -->
+        <profile>
+            <id>quiet-javafx-on-jdk24</id>
+            <activation>
+                <jdk>[24,)</jdk>
+            </activation>
+            <build>
+                <plugins>
+                    <plugin>
+                        <groupId>org.openjfx</groupId>
+                        <artifactId>javafx-maven-plugin</artifactId>
+                        <configuration>
+                            <options>
+                                <option>--enable-native-access=javafx.graphics</option>
+                                <option>--sun-misc-unsafe-memory-access=allow</option>
+                            </options>
+                        </configuration>
+                    </plugin>
+
+                    <!-- The tests load JavaFX from the classpath rather than as a
+                         module, so there the native code belongs to the unnamed
+                         module. They never render through Marlin, so the Unsafe
+                         warning does not come up and needs no flag. -->
+                    <plugin>
+                        <groupId>org.apache.maven.plugins</groupId>
+                        <artifactId>maven-surefire-plugin</artifactId>
+                        <configuration>
+                            <argLine>--enable-native-access=ALL-UNNAMED</argLine>
+                        </configuration>
+                    </plugin>
+                </plugins>
+            </build>
+        </profile>
+    </profiles>
 </project>
