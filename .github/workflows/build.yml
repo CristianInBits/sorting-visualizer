@@ -8,13 +8,19 @@ on:
 
 jobs:
   build:
-    # Built on Windows, so both are checked: this catches path and
-    # line-ending differences that only show up on one of them.
+    # Both operating systems, because the project is developed on Windows and
+    # the wrapper's line endings and exec bit only bite on Linux.
+    #
+    # Both ends of the supported JDK range: 17 is the minimum the project
+    # promises, and 25 is recent enough to switch on the profile that
+    # silences JavaFX's startup warnings, so its flags get exercised as well.
     strategy:
       fail-fast: false
       matrix:
         os: [ubuntu-latest, windows-latest]
+        java: ['17', '25']
 
+    name: build (${{ matrix.os }}, JDK ${{ matrix.java }})
     runs-on: ${{ matrix.os }}
 
     defaults:
@@ -27,11 +33,28 @@ jobs:
 
       - uses: actions/setup-java@v6
         with:
-          java-version: '17'
+          java-version: ${{ matrix.java }}
           distribution: temurin
           cache: maven
 
-      # The tests never start a JavaFX toolkit, so no display is needed.
+      # The interface tests start JavaFX headless through Monocle, so no
+      # display is needed on either runner.
       - name: Build and test
         timeout-minutes: 12
         run: ./mvnw -B --no-transfer-progress clean verify
+
+      # verify never launches the app, so on its own it cannot tell whether
+      # this JDK accepts the flags javafx:run hands the JVM. Read them from the
+      # effective POM and have the JDK start with them: a flag it does not
+      # recognise stops the JVM outright, which is exactly what a typo in the
+      # pom would do to the app.
+      #
+      # The declared profiles are deleted before reading, because the
+      # effective POM lists them even when inactive. Without that, JDK 17
+      # would be handed the Unsafe flag, which it refuses to start with.
+      - name: Check this JDK accepts the app's launch flags
+        run: |
+          ./mvnw -B -q --no-transfer-progress help:effective-pom -Doutput=effective-pom.xml
+          opts=$(sed '/<profiles>/,/<\/profiles>/d' effective-pom.xml | grep -oP '(?<=<option>)[^<]+' | tr '\n' ' ' || true)
+          echo "Launch flags on JDK ${{ matrix.java }}: ${opts:-none}"
+          java $opts -version
