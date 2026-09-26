@@ -19,7 +19,7 @@ theme.
 
 ---
 
-## Run it
+## 🚀 Run it
 
 ### What you need
 
@@ -72,7 +72,7 @@ app, use `./mvnw test`.
 
 ---
 
-## What you can do
+## ✨ What you can do
 
 - **Step through it by hand.** Tick *Step by step* and the run pauses on every
   comparison and every move. Untick it mid-run and it carries on from where it
@@ -96,7 +96,7 @@ app, use `./mvnw test`.
 
 ---
 
-## The algorithms
+## 📊 The algorithms
 
 <div align="center">
 <img src="assets/preview/sort.gif" width="600" alt="Bubble Sort running: the compared pair is red, and the sorted tail grows from the right">
@@ -155,7 +155,7 @@ every comparison.
 
 ---
 
-## Themes
+## 🌗 Themes
 
 <div align="center">
 <table>
@@ -175,7 +175,7 @@ theme along with everything else.
 
 ---
 
-## How it works
+## 🧩 How it works
 
 The algorithms are plain Java. They know nothing about JavaFX, threads or
 timing: each one sorts an `int[]` and reports what it did to a `SortTrace`.
@@ -205,7 +205,7 @@ exception unwind.
 
 ---
 
-## Tests
+## 🧪 Tests
 
 ```bash
 ./mvnw test
@@ -238,7 +238,7 @@ finish, and checks the array came back sorted.
 
 ---
 
-## Project structure
+## 📁 Project structure
 
 ```
 src/main/java/app/
@@ -272,7 +272,7 @@ src/test/java/app/
 
 ---
 
-## Contributing
+## 🤝 Contributing
 
 Bug reports, feature requests and pull requests are all welcome — see
 [CONTRIBUTING.md](CONTRIBUTING.md) for the branch naming, the commands to run
@@ -286,12 +286,12 @@ Sort would all fit.
 
 ---
 
-## Author
+## 👤 Author
 
 Built by [Cristian Laurentiu Sindila](https://github.com/CristianInBits),
 a Computer Engineering student interested in algorithms, data structures and
 clean code.
 
-## License
+## 📄 License
 
 [MIT](LICENSE).
